@@ -97,6 +97,11 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
         jLabel24 = new javax.swing.JLabel();
         jLabel25 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        tableVentas = new javax.swing.JTable();
+        btnLupaVentas = new javax.swing.JButton();
+        btnPdfVentas = new javax.swing.JButton();
+        fieldLupaVentas = new javax.swing.JTextField();
         jPanel7 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -666,6 +671,7 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
         btnNuevoProductos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/nuevo.png"))); // NOI18N
         btnNuevoProductos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
+        btnExcelProductos.setBackground(new java.awt.Color(241, 241, 241));
         btnExcelProductos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/excel.png"))); // NOI18N
         btnExcelProductos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
@@ -774,15 +780,52 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
 
         jPanel6.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
+        tableVentas.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane5.setViewportView(tableVentas);
+
+        btnLupaVentas.setBackground(new java.awt.Color(241, 241, 241));
+        btnLupaVentas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/lupa.png"))); // NOI18N
+
+        btnPdfVentas.setBackground(new java.awt.Color(241, 241, 241));
+        btnPdfVentas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/pdf.png"))); // NOI18N
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 768, Short.MAX_VALUE)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGap(33, 33, 33)
+                .addComponent(btnLupaVentas, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(32, 32, 32)
+                .addComponent(fieldLupaVentas, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnPdfVentas, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(33, 33, 33))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                .addContainerGap(18, Short.MAX_VALUE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 732, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 464, Short.MAX_VALUE)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGap(37, 37, 37)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnLupaVentas)
+                    .addComponent(btnPdfVentas)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGap(4, 4, 4)
+                        .addComponent(fieldLupaVentas, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(117, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("tab5", jPanel6);
@@ -831,10 +874,12 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
     public javax.swing.JButton btnGuardarProductos;
     public javax.swing.JButton btnGuardarProveedor;
     public javax.swing.JButton btnImprimirNV;
+    private javax.swing.JButton btnLupaVentas;
     public javax.swing.JButton btnNuevaVenta;
     public javax.swing.JButton btnNuevoClientes;
     public javax.swing.JButton btnNuevoProductos;
     public javax.swing.JButton btnNuevoProveedor;
+    private javax.swing.JButton btnPdfVentas;
     public javax.swing.JButton btnProductos;
     public javax.swing.JButton btnProveedor;
     public javax.swing.JButton btnVentas;
@@ -849,6 +894,7 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
     public javax.swing.JTextField fieldEmailClientes;
     public javax.swing.JTextField fieldEmailProveedor;
     public javax.swing.JTextField fieldIdentificacionClientes;
+    private javax.swing.JTextField fieldLupaVentas;
     public javax.swing.JTextField fieldNombreClienteNV;
     public javax.swing.JTextField fieldNombreClientes;
     public javax.swing.JTextField fieldNombreProductos;
@@ -899,11 +945,13 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JSeparator jSeparator7;
     public javax.swing.JTabbedPane jTabbedPane1;
     public javax.swing.JTable tableClientes;
     public javax.swing.JTable tableNV;
     public javax.swing.JTable tableProductos;
     public javax.swing.JTable tableProveedor;
+    private javax.swing.JTable tableVentas;
     // End of variables declaration//GEN-END:variables
 }
