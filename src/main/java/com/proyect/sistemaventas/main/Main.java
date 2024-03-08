@@ -9,6 +9,6 @@ public class Main {
         
         LoginView loginView = new LoginView();
         MainController controller = new MainController(loginView);
-        controller.start();
+        controller.startLogin();
     }
 }

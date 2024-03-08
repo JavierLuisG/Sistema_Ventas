@@ -6,14 +6,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-import javax.swing.JOptionPane;
 
 public class DatabaseConnection {
 
     private String user;
     private String password;
     private String url;
-    
+
     static DatabaseConnection instance = null; // Instancia de la clase para solo tener una
     private Connection conn; // Instancia que permite la conexión a la base de datos
     private final Properties properties = new Properties(); // Instancia que permite obtener las propiedades 
@@ -37,7 +36,6 @@ public class DatabaseConnection {
         try {
             loadProperties();
             conn = DriverManager.getConnection(url, user, password);
-            JOptionPane.showMessageDialog(null, "Conexión exitosa"); // Para probar conexión
         } catch (SQLException ex) {
             System.err.println("No se pudo realizar la conexión, " + ex);
         }
@@ -62,7 +60,7 @@ public class DatabaseConnection {
             System.err.println("Error, loading properties, " + ex);
         }
     }
-    
+
     public void closeConnection() {
         if (conn != null) {
             try {
