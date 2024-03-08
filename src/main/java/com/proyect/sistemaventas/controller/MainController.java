@@ -1,5 +1,6 @@
 package com.proyect.sistemaventas.controller;
 
+import com.proyect.sistemaventas.dal.DatabaseConnection;
 import com.proyect.sistemaventas.view.LoginView;
 
 public class MainController {
@@ -17,5 +18,6 @@ public class MainController {
         loginView.setResizable(false);
         loginView.setLocationRelativeTo(null);
         loginView.setVisible(true);
+        DatabaseConnection.getInstance().getConnection(); // Probar conexión
     }
 }
