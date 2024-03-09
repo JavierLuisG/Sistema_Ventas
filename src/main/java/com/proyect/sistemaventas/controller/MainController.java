@@ -8,13 +8,15 @@ import com.proyect.sistemaventas.view.LoginView;
 import com.proyect.sistemaventas.view.SistemaPrincipalView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 public class MainController implements ActionListener {
 
-    private LoginView loginView;
-    private User user;
-    private UserDAOImpl userImpl;
+    private final LoginView loginView;
+    private final User user;
+    private final UserDAOImpl userImpl;
     private Customer customer;
     private CustomerDAOImpl customerImpl;
     private SistemaPrincipalView pagePrincipal;
@@ -26,6 +28,7 @@ public class MainController implements ActionListener {
     private String email;
     private String address;
     private String razonSocial;
+    private final DefaultTableModel tableModelCustomer = new DefaultTableModel();
 
     /**
      * Constructor del MainController
@@ -57,10 +60,44 @@ public class MainController implements ActionListener {
         pagePrincipal.setResizable(false);
         pagePrincipal.setLocationRelativeTo(null);
         pagePrincipal.setVisible(true);
-        /* Inicializar customer y customerImpl y generar las acciones de los botones en de Clientes */
+        /* Inicializar customer y customerImpl y generar las acciones de los botones de Clientes */
         customer = new Customer();
         customerImpl = new CustomerDAOImpl();
         pagePrincipal.btnGuardarClientes.addActionListener(this);
+        /* Asignar el model a la tabla correspondiente y asignar las columnas con sus filas*/
+        pagePrincipal.tableClientes.setModel(tableModelCustomer);
+        loadModelCustomer();
+    }
+
+    /**
+     * Permite establecer las columnas con su respectivo nombre
+     */
+    public void loadModelCustomer() {
+        tableModelCustomer.addColumn("Identificación");
+        tableModelCustomer.addColumn("Nombre");
+        tableModelCustomer.addColumn("Teléfono");
+        tableModelCustomer.addColumn("Email");
+        tableModelCustomer.addColumn("Dirección");
+        tableModelCustomer.addColumn("Razón social");
+        addListTableModelCustomer(); // Asignar las filas según los datos traidos de la base de datos
+    }
+
+    /**
+     * Permite agregar los registros obtenidos del findAll a la tabla Clientes
+     */
+    public void addListTableModelCustomer() {
+        List<Customer> listCustomer = customerImpl.findAll(customer);
+        tableModelCustomer.setRowCount(0);
+        for (Customer cstmr : listCustomer) {
+            identification = cstmr.getIdentification();
+            name = cstmr.getName();
+            phoneNumber = cstmr.getPhoneNumber();
+            email = cstmr.getEmail();
+            address = cstmr.getAddress();
+            razonSocial = cstmr.getRazonSocial();
+            Object[] row = {identification, name, phoneNumber, email, address, razonSocial};
+            tableModelCustomer.addRow(row);
+        }
     }
 
     /**
@@ -98,6 +135,7 @@ public class MainController implements ActionListener {
                         case 0 ->
                             JOptionPane.showMessageDialog(null, "No se realizó el registro");
                     }
+                    addListTableModelCustomer(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
                 }
                 case 2 ->
                     JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
