@@ -14,7 +14,7 @@ public class UserDAOImpl implements UserDAO {
     private PreparedStatement ps;
     private ResultSet rs;
 
-    private String select = "SELECT * FROM usuarios WHERE email_usuario = ? AND password_usuario = ?";
+    private final String select = "SELECT * FROM usuarios WHERE email_usuario = ? AND password_usuario = ?";
 
     @Override
     public int findByEmailAndPassword(User t) {
