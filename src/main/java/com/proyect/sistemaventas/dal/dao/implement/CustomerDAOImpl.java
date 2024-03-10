@@ -1,5 +1,6 @@
 package com.proyect.sistemaventas.dal.dao.implement;
 
+import com.mysql.cj.jdbc.exceptions.MysqlDataTruncation;
 import com.proyect.sistemaventas.dal.DatabaseConnection;
 import com.proyect.sistemaventas.dal.dao.CustomerDAO;
 import com.proyect.sistemaventas.model.Customer;
@@ -21,13 +22,14 @@ public class CustomerDAOImpl implements CustomerDAO {
     private final String create = "INSERT INTO clientes (identificacion, nombre, telefono, email, direccion, razon_social) values (?,?,?,?,?,?)";
     private final String selectOne = "SELECT * FROM clientes WHERE identificacion = ?";
     private final String selectAll = "SELECT * FROM clientes";
+    private final String modify = "UPDATE clientes SET identificacion=?, nombre=?, telefono=?,email=?,direccion=?,razon_social=? WHERE id_cliente = ?";
 
     @Override
     public int insert(Customer t) {
         conn = DatabaseConnection.getInstance().getConnection();
         try {
             ps = conn.prepareStatement(create);
-            ps.setInt(1, t.getIdentification());
+            ps.setString(1, t.getIdentification());
             ps.setString(2, t.getName());
             ps.setString(3, t.getPhoneNumber());
             ps.setString(4, t.getEmail());
@@ -38,7 +40,7 @@ public class CustomerDAOImpl implements CustomerDAO {
             } else {
                 return 0;
             }
-        } catch (SQLIntegrityConstraintViolationException ex) {
+        } catch (SQLIntegrityConstraintViolationException ex) { // CDU: N° identificación ya registrado, dato Unique Index
             return 2;
         } catch (SQLException ex) {
             System.err.println("No se pudo realizar la conexión, " + ex);
@@ -57,7 +59,38 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public int update(Customer t) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        conn = DatabaseConnection.getInstance().getConnection();
+        try {
+            ps = conn.prepareStatement(modify);
+            ps.setString(1, t.getIdentification());
+            ps.setString(2, t.getName());
+            ps.setString(3, t.getPhoneNumber());
+            ps.setString(4, t.getEmail());
+            ps.setString(5, t.getAddress());
+            ps.setString(6, t.getRazonSocial());
+            ps.setInt(7, t.getIdCustomer());
+            if (ps.executeUpdate() > 0) {
+                return 1;                
+            } else {
+                return 2;
+            }
+        } catch (SQLIntegrityConstraintViolationException ex) { // CDU: N° identificación ya registrado, dato Unique Index
+            return 3;
+        } catch (MysqlDataTruncation ex) { // CDU: si ingresa mas de los caracteres permitidos
+            return 4;
+        } catch (SQLException ex) {
+            System.err.println("No se pudo realizar la conexión, " + ex);
+            return 0;
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    System.err.println("No se cerró el PreparedStatement");
+                }
+            }
+            DatabaseConnection.getInstance().closeConnection();
+        }
     }
 
     @Override
@@ -70,11 +103,11 @@ public class CustomerDAOImpl implements CustomerDAO {
         conn = DatabaseConnection.getInstance().getConnection();
         try {
             ps = conn.prepareStatement(selectOne);
-            ps.setInt(1, t.getIdentification());
+            ps.setString(1, t.getIdentification());
             rs = ps.executeQuery();
             if (rs.next()) {
                 t.setIdCustomer(rs.getInt("id_cliente"));
-                t.setIdentification(rs.getInt("identificacion"));
+                t.setIdentification(rs.getString("identificacion"));
                 t.setName(rs.getString("nombre"));
                 t.setPhoneNumber(rs.getString("telefono"));
                 t.setEmail(rs.getString("email"));
@@ -115,7 +148,7 @@ public class CustomerDAOImpl implements CustomerDAO {
             rs = ps.executeQuery();
             while (rs.next()) {
                 int id = rs.getInt("id_cliente");
-                int identification = rs.getInt("identificacion");
+                String identification = rs.getString("identificacion");
                 String name = rs.getString("nombre");
                 String phoneNumber = rs.getString("telefono");
                 String email = rs.getString("email");

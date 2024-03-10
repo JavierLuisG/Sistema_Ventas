@@ -5,7 +5,7 @@ import java.sql.Date;
 public class Customer {
 
     private int idCustomer;
-    private int identification;
+    private String identification;
     private String name;
     private String phoneNumber;
     private String email;
@@ -16,7 +16,7 @@ public class Customer {
     public Customer() {
     }
 
-    public Customer(int idCustomer, int identification, String name, String phoneNumber, String email, String address, String razonSocial, Date date) {
+    public Customer(int idCustomer, String identification, String name, String phoneNumber, String email, String address, String razonSocial, Date date) {
         this.idCustomer = idCustomer;
         this.identification = identification;
         this.name = name;
@@ -35,11 +35,11 @@ public class Customer {
         this.idCustomer = idCustomer;
     }
 
-    public int getIdentification() {
+    public String getIdentification() {
         return identification;
     }
 
-    public void setIdentification(int identification) {
+    public void setIdentification(String identification) {
         this.identification = identification;
     }
 

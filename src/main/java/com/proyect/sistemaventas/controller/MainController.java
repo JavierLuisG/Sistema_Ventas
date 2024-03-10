@@ -24,7 +24,7 @@ public class MainController implements ActionListener {
     private SistemaPrincipalView pagePrincipal;
 
     /* Variables en relacion a Customer */
-    private int identification;
+    private String identification;
     private String name;
     private String phoneNumber;
     private String email;
@@ -66,6 +66,7 @@ public class MainController implements ActionListener {
         customer = new Customer();
         customerImpl = new CustomerDAOImpl();
         pagePrincipal.btnGuardarClientes.addActionListener(this);
+        pagePrincipal.btnActualizarClientes.addActionListener(this);
         /* Asignar el model a la tabla correspondiente y asignar las columnas con sus filas*/
         pagePrincipal.tableClientes.setModel(tableModelCustomer);
         loadModelCustomer();
@@ -113,7 +114,7 @@ public class MainController implements ActionListener {
         public void mouseClicked(MouseEvent e) {
             if (pagePrincipal.tableClientes.rowAtPoint(e.getPoint()) != -1) {
                 int index = pagePrincipal.tableClientes.rowAtPoint(e.getPoint());
-                customer.setIdentification(Integer.parseInt(pagePrincipal.tableClientes.getValueAt(index, 0).toString()));
+                customer.setIdentification(pagePrincipal.tableClientes.getValueAt(index, 0).toString());
                 switch (customerImpl.findById(customer)) {
                     case 1 -> {
                         pagePrincipal.fieldIdClientes.setText(String.valueOf(customer.getIdCustomer()));
@@ -176,6 +177,36 @@ public class MainController implements ActionListener {
                     JOptionPane.showMessageDialog(null, "Ingrese un N° identificación numérico");
             }
         }
+        if (e.getSource() == pagePrincipal.btnActualizarClientes) {
+            switch (validationEnteredDataCustomer()) {
+                case 1 -> {
+                    customer.setIdentification(identification);
+                    customer.setName(name);
+                    customer.setPhoneNumber(phoneNumber);
+                    customer.setEmail(email);
+                    customer.setAddress(address);
+                    customer.setRazonSocial(razonSocial);
+                    switch (customerImpl.update(customer)) {
+                        case 1 -> {
+                            JOptionPane.showMessageDialog(null, "Registro cliente actualizado");
+                        }
+                        case 2 ->
+                            JOptionPane.showMessageDialog(null, "No se realizó la actualización");
+                        case 3 ->
+                            JOptionPane.showMessageDialog(null, "N° identificación ya registrado");
+                        case 4 ->
+                            JOptionPane.showMessageDialog(null, "Ingrese correctamente los valores solicitados");
+                        case 0 ->
+                            JOptionPane.showMessageDialog(null, "Problemas en la conexión");
+                    }
+                    addListTableModelCustomer(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
+                }
+                case 2 ->
+                    JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
+                case 0 ->
+                    JOptionPane.showMessageDialog(null, "Ingrese un N° identificación numérico");
+            }
+        }
     }
 
     /**
@@ -196,7 +227,7 @@ public class MainController implements ActionListener {
      */
     public int validationEnteredDataCustomer() {
         if (isNumeric(pagePrincipal.fieldIdentificacionClientes.getText().trim())) {
-            identification = Integer.parseInt(pagePrincipal.fieldIdentificacionClientes.getText().trim());
+            identification = pagePrincipal.fieldIdentificacionClientes.getText().trim();
             name = pagePrincipal.fieldNombreClientes.getText().trim();
             phoneNumber = pagePrincipal.fieldTelefonoClientes.getText().trim();
             email = pagePrincipal.fieldEmailClientes.getText().trim();
