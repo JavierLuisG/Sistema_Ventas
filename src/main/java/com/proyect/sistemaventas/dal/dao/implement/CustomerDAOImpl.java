@@ -16,8 +16,8 @@ import java.util.List;
 public class CustomerDAOImpl implements CustomerDAO {
 
     private Connection conn;
-    private PreparedStatement ps;
-    private ResultSet rs;
+    private PreparedStatement ps = null;
+    private ResultSet rs = null;
 
     private final String create = "INSERT INTO clientes (identificacion, nombre, telefono, email, direccion, razon_social) values (?,?,?,?,?,?)";
     private final String selectOne = "SELECT * FROM clientes WHERE identificacion = ?";
@@ -47,13 +47,7 @@ public class CustomerDAOImpl implements CustomerDAO {
             System.err.println("No se pudo realizar la conexión, " + ex);
             return 0;
         } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                    System.err.println("No se cerró el PreparedStatement");
-                }
-            }
+            closeResources(ps, rs);
             DatabaseConnection.getInstance().closeConnection();
         }
     }
@@ -83,13 +77,7 @@ public class CustomerDAOImpl implements CustomerDAO {
             System.err.println("No se pudo realizar la conexión, " + ex);
             return 0;
         } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                    System.err.println("No se cerró el PreparedStatement");
-                }
-            }
+            closeResources(ps, rs);
             DatabaseConnection.getInstance().closeConnection();
         }
     }
@@ -109,13 +97,7 @@ public class CustomerDAOImpl implements CustomerDAO {
             System.err.println("No se pudo realizar la conexión, " + ex);
             return 0;
         } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                    System.err.println("No se cerró el PreparedStatement");
-                }
-            }
+            closeResources(ps, rs);
             DatabaseConnection.getInstance().closeConnection();
         }
     }
@@ -143,20 +125,7 @@ public class CustomerDAOImpl implements CustomerDAO {
             System.err.println("No se pudo realizar la conexión, " + ex);
             return 0;
         } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                    System.err.println("No se cerró el ResultSet");
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                    System.err.println("No se cerró el PreparedStatement");
-                }
-            }
+            closeResources(ps, rs);
             DatabaseConnection.getInstance().closeConnection();
         }
     }
@@ -183,23 +152,30 @@ public class CustomerDAOImpl implements CustomerDAO {
         } catch (SQLException ex) {
             System.err.println("No se pudo realizar la conexión, " + ex);
         } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                    System.err.println("No se cerró el ResultSet");
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                    System.err.println("No se cerró el PreparedStatement");
-                }
-            }
+            closeResources(ps, rs);
             DatabaseConnection.getInstance().closeConnection();
         }
         return customer;
     }
 
+    public void closeResources(PreparedStatement ps, ResultSet rs) {
+        if (rs != null) {
+            try {
+                if (!rs.isClosed()) { // Permite cerrar si antes no ha sido cerrada 
+                    rs.close();
+                }
+            } catch (SQLException e) {
+                System.err.println("No se cerró el ResultSet");
+            }
+        }
+        if (ps != null) {
+            try {
+                if (!ps.isClosed()) { // Permite cerrar si antes no ha sido cerrada
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                System.err.println("No se cerró el PreparedStatement");
+            }
+        }
+    }
 }
