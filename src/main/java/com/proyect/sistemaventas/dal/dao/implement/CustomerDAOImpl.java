@@ -23,6 +23,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     private final String selectOne = "SELECT * FROM clientes WHERE identificacion = ?";
     private final String selectAll = "SELECT * FROM clientes";
     private final String modify = "UPDATE clientes SET identificacion=?, nombre=?, telefono=?,email=?,direccion=?,razon_social=? WHERE id_cliente = ?";
+    private final String erase = "DELETE FROM clientes WHERE id_cliente = ?";
 
     @Override
     public int insert(Customer t) {
@@ -70,9 +71,9 @@ public class CustomerDAOImpl implements CustomerDAO {
             ps.setString(6, t.getRazonSocial());
             ps.setInt(7, t.getIdCustomer());
             if (ps.executeUpdate() > 0) {
-                return 1;                
+                return 1;
             } else {
-                return 2;
+                return 2; // CDU: realiza un registro y de inmediato hace una actualización (no tiene seleccionado un id_cliente)
             }
         } catch (SQLIntegrityConstraintViolationException ex) { // CDU: N° identificación ya registrado, dato Unique Index
             return 3;
@@ -95,7 +96,28 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public int delete(Customer t) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        conn = DatabaseConnection.getInstance().getConnection();
+        try {
+            ps = conn.prepareStatement(erase);
+            ps.setInt(1, t.getIdCustomer());
+            if (ps.executeUpdate() > 0) {
+                return 1;
+            } else {
+                return 2;
+            }
+        } catch (SQLException ex) {
+            System.err.println("No se pudo realizar la conexión, " + ex);
+            return 0;
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    System.err.println("No se cerró el PreparedStatement");
+                }
+            }
+            DatabaseConnection.getInstance().closeConnection();
+        }
     }
 
     @Override

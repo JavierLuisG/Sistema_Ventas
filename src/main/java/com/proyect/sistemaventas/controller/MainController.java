@@ -67,6 +67,7 @@ public class MainController implements ActionListener {
         customerImpl = new CustomerDAOImpl();
         pagePrincipal.btnGuardarClientes.addActionListener(this);
         pagePrincipal.btnActualizarClientes.addActionListener(this);
+        pagePrincipal.btnEliminarClientes.addActionListener(this);
         /* Asignar el model a la tabla correspondiente y asignar las columnas con sus filas*/
         pagePrincipal.tableClientes.setModel(tableModelCustomer);
         loadModelCustomer();
@@ -178,33 +179,54 @@ public class MainController implements ActionListener {
             }
         }
         if (e.getSource() == pagePrincipal.btnActualizarClientes) {
-            switch (validationEnteredDataCustomer()) {
-                case 1 -> {
-                    customer.setIdentification(identification);
-                    customer.setName(name);
-                    customer.setPhoneNumber(phoneNumber);
-                    customer.setEmail(email);
-                    customer.setAddress(address);
-                    customer.setRazonSocial(razonSocial);
-                    switch (customerImpl.update(customer)) {
-                        case 1 -> {
-                            JOptionPane.showMessageDialog(null, "Registro cliente actualizado");
+            if (customer.getIdCustomer() != 0) { // Confima que primero haya sido seleccionado un registro
+                switch (validationEnteredDataCustomer()) {
+                    case 1 -> {
+                        customer.setIdentification(identification);
+                        customer.setName(name);
+                        customer.setPhoneNumber(phoneNumber);
+                        customer.setEmail(email);
+                        customer.setAddress(address);
+                        customer.setRazonSocial(razonSocial);
+                        switch (customerImpl.update(customer)) {
+                            case 1 -> {
+                                JOptionPane.showMessageDialog(null, "Registro cliente actualizado");
+                            }
+                            case 2 ->
+                                JOptionPane.showMessageDialog(null, "No se realizó la actualización");
+                            case 3 ->
+                                JOptionPane.showMessageDialog(null, "N° identificación ya registrado");
+                            case 4 ->
+                                JOptionPane.showMessageDialog(null, "Ingrese correctamente los valores solicitados");
+                            case 0 ->
+                                JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                         }
-                        case 2 ->
-                            JOptionPane.showMessageDialog(null, "No se realizó la actualización");
-                        case 3 ->
-                            JOptionPane.showMessageDialog(null, "N° identificación ya registrado");
-                        case 4 ->
-                            JOptionPane.showMessageDialog(null, "Ingrese correctamente los valores solicitados");
-                        case 0 ->
-                            JOptionPane.showMessageDialog(null, "Problemas en la conexión");
+                        addListTableModelCustomer(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
                     }
-                    addListTableModelCustomer(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
+                    case 2 ->
+                        JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
+                    case 0 ->
+                        JOptionPane.showMessageDialog(null, "Ingrese un N° identificación numérico");
+                }                
+            } else {
+                JOptionPane.showMessageDialog(null, "Seleccione primero un registro para actualizar");                
+            }
+        }
+        if (e.getSource() == pagePrincipal.btnEliminarClientes) {
+            if (customer.getIdCustomer() != 0) { // confirma que primero haya sido seleccionado un registro
+                switch (customerImpl.delete(customer)) {
+                    case 1 -> {
+                        JOptionPane.showMessageDialog(null, "Registro de cliente con N° identificación " + customer.getIdentification() + " eliminado");
+                        customer.setIdCustomer(0);
+                    }
+                    case 2 -> 
+                        JOptionPane.showMessageDialog(null, "Problema al eliminar el registro");
+                    case 0 -> 
+                        JOptionPane.showMessageDialog(null, "Problema en la conexión");
                 }
-                case 2 ->
-                    JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
-                case 0 ->
-                    JOptionPane.showMessageDialog(null, "Ingrese un N° identificación numérico");
+                addListTableModelCustomer(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
+            } else {
+                JOptionPane.showMessageDialog(null, "Seleccione primero un registro para eliminar");                
             }
         }
     }
