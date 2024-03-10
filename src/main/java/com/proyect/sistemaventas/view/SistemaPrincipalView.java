@@ -1018,12 +1018,12 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
     public javax.swing.JButton btnGuardarProductos;
     public javax.swing.JButton btnGuardarProveedor;
     public javax.swing.JButton btnImprimirNV;
-    private javax.swing.JButton btnLupaVentas;
+    public javax.swing.JButton btnLupaVentas;
     public javax.swing.JButton btnNuevaVenta;
     public javax.swing.JButton btnNuevoClientes;
     public javax.swing.JButton btnNuevoProductos;
     public javax.swing.JButton btnNuevoProveedor;
-    private javax.swing.JButton btnPdfVentas;
+    public javax.swing.JButton btnPdfVentas;
     public javax.swing.JButton btnProductos;
     public javax.swing.JButton btnProveedor;
     public javax.swing.JButton btnVentas;
@@ -1035,17 +1035,17 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
     public javax.swing.JTextField fieldDNIClienteNV;
     public javax.swing.JTextField fieldDireccionClientes;
     public javax.swing.JTextField fieldDireccionConfig;
-    private javax.swing.JTextField fieldDireccionNV;
+    public javax.swing.JTextField fieldDireccionNV;
     public javax.swing.JTextField fieldDireccionProveedor;
     public javax.swing.JTextField fieldEmailClientes;
     public javax.swing.JTextField fieldEmailProveedor;
-    private javax.swing.JTextField fieldIdClientes;
-    private javax.swing.JTextField fieldIdProducto;
-    private javax.swing.JTextField fieldIdProductoNV;
-    private javax.swing.JTextField fieldIdProveedor;
-    private javax.swing.JTextField fieldIdVentas;
+    public javax.swing.JTextField fieldIdClientes;
+    public javax.swing.JTextField fieldIdProducto;
+    public javax.swing.JTextField fieldIdProductoNV;
+    public javax.swing.JTextField fieldIdProveedor;
+    public javax.swing.JTextField fieldIdVentas;
     public javax.swing.JTextField fieldIdentificacionClientes;
-    private javax.swing.JTextField fieldLupaVentas;
+    public javax.swing.JTextField fieldLupaVentas;
     public javax.swing.JTextField fieldNombreClienteNV;
     public javax.swing.JTextField fieldNombreClientes;
     public javax.swing.JTextField fieldNombreConfig;
@@ -1056,14 +1056,14 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
     public javax.swing.JTextField fieldProductoNV;
     public javax.swing.JTextField fieldRazonSocialClientes;
     public javax.swing.JTextField fieldRazonSocialConfig;
-    private javax.swing.JTextField fieldRazonSocialNV;
+    public javax.swing.JTextField fieldRazonSocialNV;
     public javax.swing.JTextField fieldRazonSocialProveedor;
     public javax.swing.JTextField fieldRutConfig;
     public javax.swing.JTextField fieldRutProveedor;
     public javax.swing.JTextField fieldStockNV;
     public javax.swing.JTextField fieldTelefonoClientes;
     public javax.swing.JTextField fieldTelefonoConfig;
-    private javax.swing.JTextField fieldTelefonoNV;
+    public javax.swing.JTextField fieldTelefonoNV;
     public javax.swing.JTextField fieldTelefonoProveedor;
     public javax.swing.JTextField fieldTotalPagarNV;
     private javax.swing.JLabel jLabel1;
@@ -1115,6 +1115,6 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
     public javax.swing.JTable tableNV;
     public javax.swing.JTable tableProductos;
     public javax.swing.JTable tableProveedor;
-    private javax.swing.JTable tableVentas;
+    public javax.swing.JTable tableVentas;
     // End of variables declaration//GEN-END:variables
 }

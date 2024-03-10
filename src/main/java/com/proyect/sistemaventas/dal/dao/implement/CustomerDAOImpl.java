@@ -19,8 +19,9 @@ public class CustomerDAOImpl implements CustomerDAO {
     private ResultSet rs;
 
     private final String create = "INSERT INTO clientes (identificacion, nombre, telefono, email, direccion, razon_social) values (?,?,?,?,?,?)";
+    private final String selectOne = "SELECT * FROM clientes WHERE identificacion = ?";
     private final String selectAll = "SELECT * FROM clientes";
-    
+
     @Override
     public int insert(Customer t) {
         conn = DatabaseConnection.getInstance().getConnection();
@@ -66,7 +67,43 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public int findById(Customer t) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        conn = DatabaseConnection.getInstance().getConnection();
+        try {
+            ps = conn.prepareStatement(selectOne);
+            ps.setInt(1, t.getIdentification());
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                t.setIdCustomer(rs.getInt("id_cliente"));
+                t.setIdentification(rs.getInt("identificacion"));
+                t.setName(rs.getString("nombre"));
+                t.setPhoneNumber(rs.getString("telefono"));
+                t.setEmail(rs.getString("email"));
+                t.setAddress(rs.getString("direccion"));
+                t.setRazonSocial(rs.getString("razon_social"));
+                return 1;
+            } else {
+                return 2; // CDU: puede aparecer en la tabla pero en la base de datos no existe ese registro
+            }
+        } catch (SQLException ex) {
+            System.err.println("No se pudo realizar la conexión, " + ex);
+            return 0;
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    System.err.println("No se cerró el ResultSet");
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    System.err.println("No se cerró el PreparedStatement");
+                }
+            }
+            DatabaseConnection.getInstance().closeConnection();
+        }
     }
 
     @Override
@@ -87,7 +124,7 @@ public class CustomerDAOImpl implements CustomerDAO {
                 Date date = rs.getDate("fecha");
                 t = new Customer(id, identification, name, phoneNumber, email, address, razonSocial, date);
                 customer.add(t);
-            }            
+            }
         } catch (SQLException ex) {
             System.err.println("No se pudo realizar la conexión, " + ex);
         } finally {
@@ -95,7 +132,7 @@ public class CustomerDAOImpl implements CustomerDAO {
                 try {
                     rs.close();
                 } catch (SQLException e) {
-                    System.err.println("No se cerró el ResultSet");                    
+                    System.err.println("No se cerró el ResultSet");
                 }
             }
             if (ps != null) {

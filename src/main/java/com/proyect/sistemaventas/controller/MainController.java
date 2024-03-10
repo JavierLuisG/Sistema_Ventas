@@ -8,6 +8,8 @@ import com.proyect.sistemaventas.view.LoginView;
 import com.proyect.sistemaventas.view.SistemaPrincipalView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -67,6 +69,8 @@ public class MainController implements ActionListener {
         /* Asignar el model a la tabla correspondiente y asignar las columnas con sus filas*/
         pagePrincipal.tableClientes.setModel(tableModelCustomer);
         loadModelCustomer();
+        pagePrincipal.tableClientes.addMouseListener(adapter); // Dar acción al mouse para seleccionar la fila de la tabla
+        pagePrincipal.tableClientes.setEnabled(false); // No permite modificar los valores en la tabla
     }
 
     /**
@@ -99,6 +103,35 @@ public class MainController implements ActionListener {
             tableModelCustomer.addRow(row);
         }
     }
+
+    /**
+     * Permite seleccionar la fila de la tabla y generar el evento... Así como
+     * el ActionEvent para los botones
+     */
+    MouseAdapter adapter = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (pagePrincipal.tableClientes.rowAtPoint(e.getPoint()) != -1) {
+                int index = pagePrincipal.tableClientes.rowAtPoint(e.getPoint());
+                customer.setIdentification(Integer.parseInt(pagePrincipal.tableClientes.getValueAt(index, 0).toString()));
+                switch (customerImpl.findById(customer)) {
+                    case 1 -> {
+                        pagePrincipal.fieldIdClientes.setText(String.valueOf(customer.getIdCustomer()));
+                        pagePrincipal.fieldIdentificacionClientes.setText(String.valueOf(customer.getIdentification()));
+                        pagePrincipal.fieldNombreClientes.setText(customer.getName());
+                        pagePrincipal.fieldTelefonoClientes.setText(customer.getPhoneNumber());
+                        pagePrincipal.fieldEmailClientes.setText(customer.getEmail());
+                        pagePrincipal.fieldDireccionClientes.setText(customer.getAddress());
+                        pagePrincipal.fieldRazonSocialClientes.setText(customer.getRazonSocial());
+                    }
+                    case 2 ->
+                        JOptionPane.showMessageDialog(null, "Problema al seleccionar el registro");
+                    case 0 ->
+                        JOptionPane.showMessageDialog(null, "Problemas en la conexión");
+                }
+            }
+        }
+    };
 
     /**
      * @param e permite capturar si se realiza una acción frente a un botón
