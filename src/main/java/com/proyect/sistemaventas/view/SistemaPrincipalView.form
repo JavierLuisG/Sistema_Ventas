@@ -692,7 +692,7 @@
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="btnEliminarClientes" min="-2" pref="35" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="btnNuevoClientes" min="-2" pref="35" max="-2" attributes="0"/>
+                              <Component id="btnLimpiarFieldsClientes" min="-2" pref="35" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
                               <Component id="fieldIdClientes" min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -714,7 +714,7 @@
                               <Component id="btnGuardarClientes" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="btnActualizarClientes" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="btnEliminarClientes" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnNuevoClientes" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnLimpiarFieldsClientes" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Component id="fieldIdClientes" alignment="1" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -814,7 +814,7 @@
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
               </AuxValues>
             </Component>
-            <Component class="javax.swing.JButton" name="btnNuevoClientes">
+            <Component class="javax.swing.JButton" name="btnLimpiarFieldsClientes">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="f1" green="f1" red="f1" type="rgb"/>
@@ -1005,7 +1005,7 @@
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="btnEliminarProveedor" min="-2" pref="35" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="btnNuevoProveedor" min="-2" pref="35" max="-2" attributes="0"/>
+                              <Component id="btnLimpiarFieldsProveedor" min="-2" pref="35" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
                               <Component id="fieldIdProveedor" min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -1027,7 +1027,7 @@
                               <Component id="btnGuardarProveedor" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="btnActualizarProveedor" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="btnEliminarProveedor" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnNuevoProveedor" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnLimpiarFieldsProveedor" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Component id="fieldIdProveedor" alignment="1" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -1129,7 +1129,7 @@
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
               </AuxValues>
             </Component>
-            <Component class="javax.swing.JButton" name="btnNuevoProveedor">
+            <Component class="javax.swing.JButton" name="btnLimpiarFieldsProveedor">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="f1" green="f1" red="f1" type="rgb"/>
@@ -1285,7 +1285,7 @@
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="btnEliminarProductos" min="-2" pref="35" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="btnNuevoProductos" min="-2" pref="35" max="-2" attributes="0"/>
+                      <Component id="btnLimpiarFieldsProductos" min="-2" pref="35" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
                       <Component id="fieldIdProducto" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -1335,7 +1335,7 @@
                               <Component id="btnGuardarProductos" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="btnActualizarProductos" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="btnEliminarProductos" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnNuevoProductos" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnLimpiarFieldsProductos" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="103" alignment="0" groupAlignment="1" attributes="0">
                               <Component id="fieldIdProducto" min="-2" max="-2" attributes="0"/>
@@ -1440,7 +1440,7 @@
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
               </AuxValues>
             </Component>
-            <Component class="javax.swing.JButton" name="btnNuevoProductos">
+            <Component class="javax.swing.JButton" name="btnLimpiarFieldsProductos">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="f1" green="f1" red="f1" type="rgb"/>

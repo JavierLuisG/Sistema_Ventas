@@ -50,7 +50,7 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
         btnGuardarClientes = new javax.swing.JButton();
         btnActualizarClientes = new javax.swing.JButton();
         btnEliminarClientes = new javax.swing.JButton();
-        btnNuevoClientes = new javax.swing.JButton();
+        btnLimpiarFieldsClientes = new javax.swing.JButton();
         fieldIdentificacionClientes = new javax.swing.JTextField();
         fieldTelefonoClientes = new javax.swing.JTextField();
         fieldNombreClientes = new javax.swing.JTextField();
@@ -70,7 +70,7 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
         btnGuardarProveedor = new javax.swing.JButton();
         btnActualizarProveedor = new javax.swing.JButton();
         btnEliminarProveedor = new javax.swing.JButton();
-        btnNuevoProveedor = new javax.swing.JButton();
+        btnLimpiarFieldsProveedor = new javax.swing.JButton();
         fieldRutProveedor = new javax.swing.JTextField();
         fieldTelefonoProveedor = new javax.swing.JTextField();
         fieldNombreProveedor = new javax.swing.JTextField();
@@ -90,7 +90,7 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
         btnGuardarProductos = new javax.swing.JButton();
         btnActualizarProductos = new javax.swing.JButton();
         btnEliminarProductos = new javax.swing.JButton();
-        btnNuevoProductos = new javax.swing.JButton();
+        btnLimpiarFieldsProductos = new javax.swing.JButton();
         btnExcelProductos = new javax.swing.JButton();
         fieldCodigoProductos = new javax.swing.JTextField();
         fieldNombreProductos = new javax.swing.JTextField();
@@ -431,9 +431,9 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
         btnEliminarClientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/borrar.png"))); // NOI18N
         btnEliminarClientes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        btnNuevoClientes.setBackground(new java.awt.Color(241, 241, 241));
-        btnNuevoClientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/nuevo.png"))); // NOI18N
-        btnNuevoClientes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnLimpiarFieldsClientes.setBackground(new java.awt.Color(241, 241, 241));
+        btnLimpiarFieldsClientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/nuevo.png"))); // NOI18N
+        btnLimpiarFieldsClientes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         fieldIdentificacionClientes.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
 
@@ -505,7 +505,7 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(btnEliminarClientes, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btnNuevoClientes, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnLimpiarFieldsClientes, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(fieldIdClientes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panelClientesLayout.createSequentialGroup()
@@ -522,7 +522,7 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
                         .addComponent(btnGuardarClientes)
                         .addComponent(btnActualizarClientes)
                         .addComponent(btnEliminarClientes)
-                        .addComponent(btnNuevoClientes))
+                        .addComponent(btnLimpiarFieldsClientes))
                     .addComponent(fieldIdClientes, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -572,9 +572,9 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
         btnEliminarProveedor.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/borrar.png"))); // NOI18N
         btnEliminarProveedor.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        btnNuevoProveedor.setBackground(new java.awt.Color(241, 241, 241));
-        btnNuevoProveedor.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/nuevo.png"))); // NOI18N
-        btnNuevoProveedor.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnLimpiarFieldsProveedor.setBackground(new java.awt.Color(241, 241, 241));
+        btnLimpiarFieldsProveedor.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/nuevo.png"))); // NOI18N
+        btnLimpiarFieldsProveedor.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         fieldRutProveedor.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
 
@@ -646,7 +646,7 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(btnEliminarProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btnNuevoProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnLimpiarFieldsProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(fieldIdProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panelProveedorLayout.createSequentialGroup()
@@ -663,7 +663,7 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
                         .addComponent(btnGuardarProveedor)
                         .addComponent(btnActualizarProveedor)
                         .addComponent(btnEliminarProveedor)
-                        .addComponent(btnNuevoProveedor))
+                        .addComponent(btnLimpiarFieldsProveedor))
                     .addComponent(fieldIdProveedor, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -714,9 +714,9 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
         btnEliminarProductos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/borrar.png"))); // NOI18N
         btnEliminarProductos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        btnNuevoProductos.setBackground(new java.awt.Color(241, 241, 241));
-        btnNuevoProductos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/nuevo.png"))); // NOI18N
-        btnNuevoProductos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnLimpiarFieldsProductos.setBackground(new java.awt.Color(241, 241, 241));
+        btnLimpiarFieldsProductos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/nuevo.png"))); // NOI18N
+        btnLimpiarFieldsProductos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         btnExcelProductos.setBackground(new java.awt.Color(241, 241, 241));
         btnExcelProductos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/excel.png"))); // NOI18N
@@ -760,7 +760,7 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(btnEliminarProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btnNuevoProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnLimpiarFieldsProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(fieldIdProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -802,7 +802,7 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
                         .addComponent(btnGuardarProductos)
                         .addComponent(btnActualizarProductos)
                         .addComponent(btnEliminarProductos)
-                        .addComponent(btnNuevoProductos))
+                        .addComponent(btnLimpiarFieldsProductos))
                     .addGroup(panelProductosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(fieldIdProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnExcelProductos)))
@@ -1018,11 +1018,11 @@ public class SistemaPrincipalView extends javax.swing.JFrame {
     public javax.swing.JButton btnGuardarProductos;
     public javax.swing.JButton btnGuardarProveedor;
     public javax.swing.JButton btnImprimirNV;
+    public javax.swing.JButton btnLimpiarFieldsClientes;
+    public javax.swing.JButton btnLimpiarFieldsProductos;
+    public javax.swing.JButton btnLimpiarFieldsProveedor;
     public javax.swing.JButton btnLupaVentas;
     public javax.swing.JButton btnNuevaVenta;
-    public javax.swing.JButton btnNuevoClientes;
-    public javax.swing.JButton btnNuevoProductos;
-    public javax.swing.JButton btnNuevoProveedor;
     public javax.swing.JButton btnPdfVentas;
     public javax.swing.JButton btnProductos;
     public javax.swing.JButton btnProveedor;

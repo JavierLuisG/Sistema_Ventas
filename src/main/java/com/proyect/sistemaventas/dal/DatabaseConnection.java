@@ -46,7 +46,7 @@ public class DatabaseConnection {
      * El método loadPropertiesDB() se encarga de cargar las propiedades de
      * conexión desde el archivo applicationDB.properties
      */
-    public void loadProperties() {
+    private void loadProperties() {
         stream = getClass().getClassLoader().getResourceAsStream("applicationDB.properties");
         try {
             properties.load(stream);

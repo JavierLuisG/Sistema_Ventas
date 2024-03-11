@@ -158,7 +158,7 @@ public class CustomerDAOImpl implements CustomerDAO {
         return customer;
     }
 
-    public void closeResources(PreparedStatement ps, ResultSet rs) {
+    private void closeResources(PreparedStatement ps, ResultSet rs) {
         if (rs != null) {
             try {
                 if (!rs.isClosed()) { // Permite cerrar si antes no ha sido cerrada 

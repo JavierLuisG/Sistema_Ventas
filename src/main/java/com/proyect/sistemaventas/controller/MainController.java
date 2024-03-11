@@ -68,6 +68,7 @@ public class MainController implements ActionListener {
         pagePrincipal.btnGuardarClientes.addActionListener(this);
         pagePrincipal.btnActualizarClientes.addActionListener(this);
         pagePrincipal.btnEliminarClientes.addActionListener(this);
+        pagePrincipal.btnLimpiarFieldsClientes.addActionListener(this);
         /* Asignar el model a la tabla correspondiente y asignar las columnas con sus filas*/
         pagePrincipal.tableClientes.setModel(tableModelCustomer);
         loadModelCustomer();
@@ -78,7 +79,7 @@ public class MainController implements ActionListener {
     /**
      * Permite establecer las columnas con su respectivo nombre
      */
-    public void loadModelCustomer() {
+    private void loadModelCustomer() {
         tableModelCustomer.addColumn("Identificación");
         tableModelCustomer.addColumn("Nombre");
         tableModelCustomer.addColumn("Teléfono");
@@ -91,7 +92,7 @@ public class MainController implements ActionListener {
     /**
      * Permite agregar los registros obtenidos del findAll a la tabla Clientes
      */
-    public void addListTableModelCustomer() {
+    private void addListTableModelCustomer() {
         List<Customer> listCustomer = customerImpl.findAll(customer);
         tableModelCustomer.setRowCount(0);
         for (Customer cstmr : listCustomer) {
@@ -108,7 +109,8 @@ public class MainController implements ActionListener {
 
     /**
      * Permite seleccionar la fila de la tabla y generar el evento... Así como
-     * el ActionEvent para los botones
+     * el ActionEvent para los botones Para eliminar un registro lo hago por
+     * medio del identification de Customer
      */
     MouseAdapter adapter = new MouseAdapter() {
         @Override
@@ -163,8 +165,10 @@ public class MainController implements ActionListener {
                     customer.setAddress(address);
                     customer.setRazonSocial(razonSocial);
                     switch (customerImpl.insert(customer)) {
-                        case 1 ->
+                        case 1 -> {
                             JOptionPane.showMessageDialog(null, "Registro cliente guardado");
+                            toClean();
+                        }
                         case 2 ->
                             JOptionPane.showMessageDialog(null, "N° identificación ya registrado");
                         case 0 ->
@@ -179,7 +183,7 @@ public class MainController implements ActionListener {
             }
         }
         if (e.getSource() == pagePrincipal.btnActualizarClientes) {
-            if (customer.getIdCustomer() != 0) { // Confima que primero haya sido seleccionado un registro
+            if (customer.getIdCustomer() != 0) { // Confirma que primero haya sido seleccionado un registro
                 switch (validationEnteredDataCustomer()) {
                     case 1 -> {
                         customer.setIdentification(identification);
@@ -191,6 +195,7 @@ public class MainController implements ActionListener {
                         switch (customerImpl.update(customer)) {
                             case 1 -> {
                                 JOptionPane.showMessageDialog(null, "Registro cliente actualizado");
+                                toClean();
                             }
                             case 2 ->
                                 JOptionPane.showMessageDialog(null, "No se realizó la actualización");
@@ -207,28 +212,47 @@ public class MainController implements ActionListener {
                         JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
                     case 0 ->
                         JOptionPane.showMessageDialog(null, "Ingrese un N° identificación numérico");
-                }                
+                }
             } else {
-                JOptionPane.showMessageDialog(null, "Seleccione primero un registro para actualizar");                
+                JOptionPane.showMessageDialog(null, "Seleccione primero un registro para actualizar");
             }
         }
         if (e.getSource() == pagePrincipal.btnEliminarClientes) {
             if (customer.getIdCustomer() != 0) { // confirma que primero haya sido seleccionado un registro
-                switch (customerImpl.delete(customer)) {
-                    case 1 -> {
-                        JOptionPane.showMessageDialog(null, "Registro de cliente con N° identificación " + customer.getIdentification() + " eliminado");
-                        customer.setIdCustomer(0);
+                if (JOptionPane.showConfirmDialog(null, "¿Seguro de eliminar el registro?", "Eliminar registro cliente", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    switch (customerImpl.delete(customer)) {
+                        case 1 -> {
+                            JOptionPane.showMessageDialog(null, "Registro de cliente con N° identificación " + customer.getIdentification() + " eliminado");
+                            toClean();
+                        }
+                        case 2 ->
+                            JOptionPane.showMessageDialog(null, "Problema al eliminar el registro");
+                        case 0 ->
+                            JOptionPane.showMessageDialog(null, "Problema en la conexión");
                     }
-                    case 2 -> 
-                        JOptionPane.showMessageDialog(null, "Problema al eliminar el registro");
-                    case 0 -> 
-                        JOptionPane.showMessageDialog(null, "Problema en la conexión");
+                    addListTableModelCustomer(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
                 }
-                addListTableModelCustomer(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
             } else {
-                JOptionPane.showMessageDialog(null, "Seleccione primero un registro para eliminar");                
+                JOptionPane.showMessageDialog(null, "Seleccione primero un registro para eliminar");
             }
         }
+        if (e.getSource() == pagePrincipal.btnLimpiarFieldsClientes) {
+            toClean();
+        }
+    }
+
+    private void toClean() {
+        // Limpiar las cajas 
+        pagePrincipal.fieldIdentificacionClientes.setText("");
+        pagePrincipal.fieldNombreClientes.setText("");
+        pagePrincipal.fieldTelefonoClientes.setText("");
+        pagePrincipal.fieldEmailClientes.setText("");
+        pagePrincipal.fieldDireccionClientes.setText("");
+        pagePrincipal.fieldRazonSocialClientes.setText("");
+        pagePrincipal.fieldIdClientes.setText("");
+        // Quitar el valor de identification y idCustomer para que no pueda eliminar ni actualizar 
+        customer.setIdCustomer(0);
+        customer.setIdentification(null);
     }
 
     /**
@@ -247,7 +271,7 @@ public class MainController implements ActionListener {
      *
      * @return int indicando cual ha sido la verificación correspondiente
      */
-    public int validationEnteredDataCustomer() {
+    private int validationEnteredDataCustomer() {
         if (isNumeric(pagePrincipal.fieldIdentificacionClientes.getText().trim())) {
             identification = pagePrincipal.fieldIdentificacionClientes.getText().trim();
             name = pagePrincipal.fieldNombreClientes.getText().trim();
