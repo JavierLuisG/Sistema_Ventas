@@ -1,11 +1,13 @@
 package com.proyect.sistemaventas.controller;
 
 import com.proyect.sistemaventas.dal.dao.implement.CustomerDAOImpl;
+import com.proyect.sistemaventas.dal.dao.implement.SupplierDAOImpl;
 import com.proyect.sistemaventas.dal.dao.implement.UserDAOImpl;
 import com.proyect.sistemaventas.model.Customer;
+import com.proyect.sistemaventas.model.Supplier;
 import com.proyect.sistemaventas.model.User;
 import com.proyect.sistemaventas.view.LoginView;
-import com.proyect.sistemaventas.view.SistemaPrincipalView;
+import com.proyect.sistemaventas.view.SystemPrincipalView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -16,21 +18,38 @@ import javax.swing.table.DefaultTableModel;
 
 public class MainController implements ActionListener {
 
+    // Views
     private final LoginView loginView;
+    private SystemPrincipalView systemPrincipal;
+
+    // User
     private final User user;
     private final UserDAOImpl userImpl;
+
+    // Customer
     private Customer customer;
     private CustomerDAOImpl customerImpl;
-    private SistemaPrincipalView pagePrincipal;
 
-    /* Variables en relacion a Customer */
-    private String identification;
-    private String name;
-    private String phoneNumber;
-    private String email;
-    private String address;
-    private String razonSocial;
+    // Supplier
+    private Supplier supplier;
+    private SupplierDAOImpl supplierImpl;
+
+    /* Variables de Customer */
+    private String identificationCustomer;
+    private String nameCustomer;
+    private String phoneNumberCustomer;
+    private String emailCustomer;
+    private String addressCustomer;
+    private String razonSocialCustomer;
     private final DefaultTableModel tableModelCustomer = new DefaultTableModel();
+
+    /* Variables de Supplier */
+    private String rutSupplier;
+    private String nameSupplier;
+    private String phoneNumberSupplier;
+    private String emailSupplier;
+    private String addressSupplier;
+    private String razonSocialSupplier;
 
     /**
      * Constructor del MainController
@@ -55,25 +74,47 @@ public class MainController implements ActionListener {
     }
 
     /**
-     * Permite inicializar el la página principal del sistema de ventas
+     * Permite inicializar la página principal del sistema de ventas y los
+     * modelos
      */
-    public void startPagePrincipal() {
-        pagePrincipal = new SistemaPrincipalView();
-        pagePrincipal.setResizable(false);
-        pagePrincipal.setLocationRelativeTo(null);
-        pagePrincipal.setVisible(true);
-        /* Inicializar customer y customerImpl y generar las acciones de los botones de Clientes */
+    private void startSystemPrincipal() {
+        systemPrincipal = new SystemPrincipalView();
+        systemPrincipal.setResizable(false);
+        systemPrincipal.setLocationRelativeTo(null);
+        systemPrincipal.setVisible(true);
+        startCustomer();
+        startSupplier();
+    }
+
+    /**
+     * Inicializar customer y customerImpl y generar las acciones de los botones
+     * de Clientes
+     */
+    private void startCustomer() {
         customer = new Customer();
         customerImpl = new CustomerDAOImpl();
-        pagePrincipal.btnGuardarClientes.addActionListener(this);
-        pagePrincipal.btnActualizarClientes.addActionListener(this);
-        pagePrincipal.btnEliminarClientes.addActionListener(this);
-        pagePrincipal.btnLimpiarFieldsClientes.addActionListener(this);
+        systemPrincipal.btnGuardarClientes.addActionListener(this);
+        systemPrincipal.btnActualizarClientes.addActionListener(this);
+        systemPrincipal.btnEliminarClientes.addActionListener(this);
+        systemPrincipal.btnLimpiarFieldsClientes.addActionListener(this);
         /* Asignar el model a la tabla correspondiente y asignar las columnas con sus filas*/
-        pagePrincipal.tableClientes.setModel(tableModelCustomer);
+        systemPrincipal.tableClientes.setModel(tableModelCustomer);
         loadModelCustomer();
-        pagePrincipal.tableClientes.addMouseListener(adapter); // Dar acción al mouse para seleccionar la fila de la tabla
-        pagePrincipal.tableClientes.setEnabled(false); // No permite modificar los valores en la tabla
+        systemPrincipal.tableClientes.addMouseListener(adapter); // Dar acción al mouse para seleccionar la fila de la tabla
+        systemPrincipal.tableClientes.setEnabled(false); // No permite modificar los valores en la tabla
+    }
+
+    /**
+     * Inicializar supplier y supplierImpl y generar las acciones de los botones
+     * de Proveedor
+     */
+    private void startSupplier() {
+        supplier = new Supplier();
+        supplierImpl = new SupplierDAOImpl();
+        systemPrincipal.btnGuardarProveedor.addActionListener(this);
+        systemPrincipal.btnActualizarProveedor.addActionListener(this);
+        systemPrincipal.btnEliminarProveedor.addActionListener(this);
+        systemPrincipal.btnLimpiarFieldsProveedor.addActionListener(this);
     }
 
     /**
@@ -96,37 +137,37 @@ public class MainController implements ActionListener {
         List<Customer> listCustomer = customerImpl.findAll(customer);
         tableModelCustomer.setRowCount(0);
         for (Customer cstmr : listCustomer) {
-            identification = cstmr.getIdentification();
-            name = cstmr.getName();
-            phoneNumber = cstmr.getPhoneNumber();
-            email = cstmr.getEmail();
-            address = cstmr.getAddress();
-            razonSocial = cstmr.getRazonSocial();
-            Object[] row = {identification, name, phoneNumber, email, address, razonSocial};
+            identificationCustomer = cstmr.getIdentification();
+            nameCustomer = cstmr.getName();
+            phoneNumberCustomer = cstmr.getPhoneNumber();
+            emailCustomer = cstmr.getEmail();
+            addressCustomer = cstmr.getAddress();
+            razonSocialCustomer = cstmr.getRazonSocial();
+            Object[] row = {identificationCustomer, nameCustomer, phoneNumberCustomer, emailCustomer, addressCustomer, razonSocialCustomer};
             tableModelCustomer.addRow(row);
         }
     }
 
     /**
      * Permite seleccionar la fila de la tabla y generar el evento... Así como
-     * el ActionEvent para los botones Para eliminar un registro lo hago por
+     * el ActionEvent para los botones. Para eliminar un registro lo hago por
      * medio del identification de Customer
      */
     MouseAdapter adapter = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (pagePrincipal.tableClientes.rowAtPoint(e.getPoint()) != -1) {
-                int index = pagePrincipal.tableClientes.rowAtPoint(e.getPoint());
-                customer.setIdentification(pagePrincipal.tableClientes.getValueAt(index, 0).toString());
+            if (systemPrincipal.tableClientes.rowAtPoint(e.getPoint()) != -1) {
+                int index = systemPrincipal.tableClientes.rowAtPoint(e.getPoint());
+                customer.setIdentification(systemPrincipal.tableClientes.getValueAt(index, 0).toString());
                 switch (customerImpl.findById(customer)) {
                     case 1 -> {
-                        pagePrincipal.fieldIdClientes.setText(String.valueOf(customer.getIdCustomer()));
-                        pagePrincipal.fieldIdentificacionClientes.setText(String.valueOf(customer.getIdentification()));
-                        pagePrincipal.fieldNombreClientes.setText(customer.getName());
-                        pagePrincipal.fieldTelefonoClientes.setText(customer.getPhoneNumber());
-                        pagePrincipal.fieldEmailClientes.setText(customer.getEmail());
-                        pagePrincipal.fieldDireccionClientes.setText(customer.getAddress());
-                        pagePrincipal.fieldRazonSocialClientes.setText(customer.getRazonSocial());
+                        systemPrincipal.fieldIdClientes.setText(String.valueOf(customer.getIdCustomer()));
+                        systemPrincipal.fieldIdentificacionClientes.setText(String.valueOf(customer.getIdentification()));
+                        systemPrincipal.fieldNombreClientes.setText(customer.getName());
+                        systemPrincipal.fieldTelefonoClientes.setText(customer.getPhoneNumber());
+                        systemPrincipal.fieldEmailClientes.setText(customer.getEmail());
+                        systemPrincipal.fieldDireccionClientes.setText(customer.getAddress());
+                        systemPrincipal.fieldRazonSocialClientes.setText(customer.getRazonSocial());
                     }
                     case 2 ->
                         JOptionPane.showMessageDialog(null, "Problema al seleccionar el registro");
@@ -142,37 +183,45 @@ public class MainController implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
+        /**
+         * ActionEvent del LOGIN
+         */
         if (e.getSource() == loginView.btnLogin) {
             user.setEmail(loginView.fieldEmail.getText().trim());
             user.setPassword(String.valueOf(loginView.fieldPassword.getPassword()));
             switch (userImpl.findByEmailAndPassword(user)) {
                 case 1 -> {
                     JOptionPane.showMessageDialog(null, "Inicio de sesión exitoso");
-                    startPagePrincipal(); // Al iniciar sesión se visualiza la interfaz de la pagina principal
+                    startSystemPrincipal(); // Al iniciar sesión se visualiza la interfaz de la pagina principal
                     loginView.dispose(); // Luego de ingresar al sistema el login se cierra
                 }
                 case 0 ->
                     JOptionPane.showMessageDialog(null, "Email o contraseña incorrectos");
             }
         }
-        if (e.getSource() == pagePrincipal.btnGuardarClientes) {
+        /**
+         * ActionEnvent de SYSTEMPRINCIPAL - Customer
+         */
+        if (e.getSource() == systemPrincipal.btnGuardarClientes) {
             switch (validationEnteredDataCustomer()) { // Validación si es o no números ingresados
                 case 1 -> {
-                    customer.setIdentification(identification);
-                    customer.setName(name);
-                    customer.setPhoneNumber(phoneNumber);
-                    customer.setEmail(email);
-                    customer.setAddress(address);
-                    customer.setRazonSocial(razonSocial);
+                    customer.setIdentification(identificationCustomer);
+                    customer.setName(nameCustomer);
+                    customer.setPhoneNumber(phoneNumberCustomer);
+                    customer.setEmail(emailCustomer);
+                    customer.setAddress(addressCustomer);
+                    customer.setRazonSocial(razonSocialCustomer);
                     switch (customerImpl.insert(customer)) {
                         case 1 -> {
                             JOptionPane.showMessageDialog(null, "Registro cliente guardado");
-                            toClean();
+                            toCleanCustomer();
                         }
                         case 2 ->
+                            JOptionPane.showMessageDialog(null, "No se realizó el registro");
+                        case 3 ->
                             JOptionPane.showMessageDialog(null, "N° identificación ya registrado");
                         case 0 ->
-                            JOptionPane.showMessageDialog(null, "No se realizó el registro");
+                            JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                     }
                     addListTableModelCustomer(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
                 }
@@ -182,20 +231,20 @@ public class MainController implements ActionListener {
                     JOptionPane.showMessageDialog(null, "Ingrese un N° identificación numérico");
             }
         }
-        if (e.getSource() == pagePrincipal.btnActualizarClientes) {
+        if (e.getSource() == systemPrincipal.btnActualizarClientes) {
             if (customer.getIdCustomer() != 0) { // Confirma que primero haya sido seleccionado un registro
                 switch (validationEnteredDataCustomer()) {
                     case 1 -> {
-                        customer.setIdentification(identification);
-                        customer.setName(name);
-                        customer.setPhoneNumber(phoneNumber);
-                        customer.setEmail(email);
-                        customer.setAddress(address);
-                        customer.setRazonSocial(razonSocial);
+                        customer.setIdentification(identificationCustomer);
+                        customer.setName(nameCustomer);
+                        customer.setPhoneNumber(phoneNumberCustomer);
+                        customer.setEmail(emailCustomer);
+                        customer.setAddress(addressCustomer);
+                        customer.setRazonSocial(razonSocialCustomer);
                         switch (customerImpl.update(customer)) {
                             case 1 -> {
                                 JOptionPane.showMessageDialog(null, "Registro cliente actualizado");
-                                toClean();
+                                toCleanCustomer();
                             }
                             case 2 ->
                                 JOptionPane.showMessageDialog(null, "No se realizó la actualización");
@@ -217,13 +266,13 @@ public class MainController implements ActionListener {
                 JOptionPane.showMessageDialog(null, "Seleccione primero un registro para actualizar");
             }
         }
-        if (e.getSource() == pagePrincipal.btnEliminarClientes) {
+        if (e.getSource() == systemPrincipal.btnEliminarClientes) {
             if (customer.getIdCustomer() != 0) { // confirma que primero haya sido seleccionado un registro
                 if (JOptionPane.showConfirmDialog(null, "¿Seguro de eliminar el registro?", "Eliminar registro cliente", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                     switch (customerImpl.delete(customer)) {
                         case 1 -> {
                             JOptionPane.showMessageDialog(null, "Registro de cliente con N° identificación " + customer.getIdentification() + " eliminado");
-                            toClean();
+                            toCleanCustomer();
                         }
                         case 2 ->
                             JOptionPane.showMessageDialog(null, "Problema al eliminar el registro");
@@ -236,23 +285,73 @@ public class MainController implements ActionListener {
                 JOptionPane.showMessageDialog(null, "Seleccione primero un registro para eliminar");
             }
         }
-        if (e.getSource() == pagePrincipal.btnLimpiarFieldsClientes) {
-            toClean();
+        if (e.getSource() == systemPrincipal.btnLimpiarFieldsClientes) {
+            toCleanCustomer();
+        }
+        /**
+         * ActionEnvent de SYSTEMPRINCIPAL - Supplier
+         */
+        if (e.getSource() == systemPrincipal.btnGuardarProveedor) {
+            switch (validationEnteredDataSupplier()) {
+                case 1 -> {
+                    supplier.setRut(rutSupplier);
+                    supplier.setName(nameSupplier);
+                    supplier.setPhoneNumber(phoneNumberSupplier);
+                    supplier.setEmail(emailSupplier);
+                    supplier.setAddress(addressSupplier);
+                    supplier.setRazonSocial(razonSocialSupplier);
+                    switch (supplierImpl.insert(supplier)) {
+                        case 1 -> {
+                            JOptionPane.showMessageDialog(null, "Registro proveedor guardado");
+                            toCleanSupplier();
+                        }
+                        case 2 ->
+                            JOptionPane.showMessageDialog(null, "No se realizó el registro");
+                        case 3 ->
+                            JOptionPane.showMessageDialog(null, "RUT ya registrado");
+                        case 0 ->
+                            JOptionPane.showMessageDialog(null, "Problemas en la conexión");
+                    }
+                    addListTableModelCustomer(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro                    
+                }
+                case 2 ->
+                    JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
+                case 0 ->
+                    JOptionPane.showMessageDialog(null, "Ingrese un RUT numérico");
+            }
         }
     }
 
-    private void toClean() {
-        // Limpiar las cajas 
-        pagePrincipal.fieldIdentificacionClientes.setText("");
-        pagePrincipal.fieldNombreClientes.setText("");
-        pagePrincipal.fieldTelefonoClientes.setText("");
-        pagePrincipal.fieldEmailClientes.setText("");
-        pagePrincipal.fieldDireccionClientes.setText("");
-        pagePrincipal.fieldRazonSocialClientes.setText("");
-        pagePrincipal.fieldIdClientes.setText("");
+    /**
+     * Limpiar los campos de Customer
+     */
+    private void toCleanCustomer() {
+        systemPrincipal.fieldIdentificacionClientes.setText("");
+        systemPrincipal.fieldNombreClientes.setText("");
+        systemPrincipal.fieldTelefonoClientes.setText("");
+        systemPrincipal.fieldEmailClientes.setText("");
+        systemPrincipal.fieldDireccionClientes.setText("");
+        systemPrincipal.fieldRazonSocialClientes.setText("");
+        systemPrincipal.fieldIdClientes.setText("");
         // Quitar el valor de identification y idCustomer para que no pueda eliminar ni actualizar 
         customer.setIdCustomer(0);
         customer.setIdentification(null);
+    }
+
+    /**
+     * Limpiar los campos de Supplier
+     */
+    private void toCleanSupplier() {
+        systemPrincipal.fieldRutProveedor.setText("");
+        systemPrincipal.fieldNombreProveedor.setText("");
+        systemPrincipal.fieldTelefonoProveedor.setText("");
+        systemPrincipal.fieldEmailProveedor.setText("");
+        systemPrincipal.fieldDireccionProveedor.setText("");
+        systemPrincipal.fieldRazonSocialProveedor.setText("");
+        systemPrincipal.fieldIdProveedor.setText("");
+        // Quitar el valor de identification y idCustomer para que no pueda eliminar ni actualizar 
+        supplier.setIdSupplier(0);
+        supplier.setRut(null);
     }
 
     /**
@@ -266,22 +365,48 @@ public class MainController implements ActionListener {
     }
 
     /**
-     * Este metodo va para Customer obteniendo los datos ingresados en las field
-     * de Clientes
+     * Este método va para Customer, obteniendo los datos ingresados en las
+     * field de Clientes
      *
      * @return int indicando cual ha sido la verificación correspondiente
      */
     private int validationEnteredDataCustomer() {
-        if (isNumeric(pagePrincipal.fieldIdentificacionClientes.getText().trim())) {
-            identification = pagePrincipal.fieldIdentificacionClientes.getText().trim();
-            name = pagePrincipal.fieldNombreClientes.getText().trim();
-            phoneNumber = pagePrincipal.fieldTelefonoClientes.getText().trim();
-            email = pagePrincipal.fieldEmailClientes.getText().trim();
-            address = pagePrincipal.fieldDireccionClientes.getText().trim();
-            razonSocial = pagePrincipal.fieldRazonSocialClientes.getText().trim();
+        if (isNumeric(systemPrincipal.fieldIdentificacionClientes.getText().trim())) {
+            identificationCustomer = systemPrincipal.fieldIdentificacionClientes.getText().trim();
+            nameCustomer = systemPrincipal.fieldNombreClientes.getText().trim();
+            phoneNumberCustomer = systemPrincipal.fieldTelefonoClientes.getText().trim();
+            emailCustomer = systemPrincipal.fieldEmailClientes.getText().trim();
+            addressCustomer = systemPrincipal.fieldDireccionClientes.getText().trim();
+            razonSocialCustomer = systemPrincipal.fieldRazonSocialClientes.getText().trim();
             // Verificación de valores ingresados. NO se tiene en cuenta razonSocial ya que en la base de datos está por default null
-            if (!name.isEmpty() && !phoneNumber.isEmpty() && !email.isEmpty()
-                    && !address.isEmpty()) {
+            if (!nameCustomer.isEmpty() && !phoneNumberCustomer.isEmpty() && !emailCustomer.isEmpty()
+                    && !addressCustomer.isEmpty()) {
+                return 1; // Retorna 1 si todos los valores están correctamente
+            } else {
+                return 2; // Retorna 2 si no ingresó los valores solicitados
+            }
+        } else {
+            return 0; // Retorna 0 si no ingresó números en el N° identificación
+        }
+    }
+
+    /**
+     * Este método va para Supplier, obteniendo los datos ingresados en las
+     * field de Proveedores
+     *
+     * @return int indicando cual ha sido la verificación correspondiente
+     */
+    private int validationEnteredDataSupplier() {
+        if (isNumeric(systemPrincipal.fieldRutProveedor.getText().trim())) {
+            rutSupplier = systemPrincipal.fieldRutProveedor.getText().trim();
+            nameSupplier = systemPrincipal.fieldNombreProveedor.getText().trim();
+            phoneNumberSupplier = systemPrincipal.fieldTelefonoProveedor.getText().trim();
+            emailSupplier = systemPrincipal.fieldEmailProveedor.getText().trim();
+            addressSupplier = systemPrincipal.fieldDireccionProveedor.getText().trim();
+            razonSocialSupplier = systemPrincipal.fieldRazonSocialProveedor.getText().trim();
+            // Verificación de valores ingresados.
+            if (!nameSupplier.isEmpty() && !phoneNumberSupplier.isEmpty() && !emailSupplier.isEmpty()
+                    && !addressSupplier.isEmpty() && !razonSocialSupplier.isEmpty()) {
                 return 1; // Retorna 1 si todos los valores están correctamente
             } else {
                 return 2; // Retorna 2 si no ingresó los valores solicitados

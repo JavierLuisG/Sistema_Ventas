@@ -1,8 +1,8 @@
 package com.proyect.sistemaventas.view;
 
-public class SistemaPrincipalView extends javax.swing.JFrame {
+public class SystemPrincipalView extends javax.swing.JFrame {
 
-    public SistemaPrincipalView() {
+    public SystemPrincipalView() {
         initComponents();
     }
 

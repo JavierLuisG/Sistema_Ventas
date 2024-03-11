@@ -39,10 +39,10 @@ public class CustomerDAOImpl implements CustomerDAO {
             if (ps.executeUpdate() > 0) {
                 return 1;
             } else {
-                return 0;
+                return 2;
             }
         } catch (SQLIntegrityConstraintViolationException ex) { // CDU: N° identificación ya registrado, dato Unique Index
-            return 2;
+            return 3;
         } catch (SQLException ex) {
             System.err.println("No se pudo realizar la conexión, " + ex);
             return 0;
