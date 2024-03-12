@@ -50,6 +50,7 @@ public class MainController implements ActionListener {
     private String emailSupplier;
     private String addressSupplier;
     private String razonSocialSupplier;
+    private final DefaultTableModel tableModelSupplier = new DefaultTableModel();
 
     /**
      * Constructor del MainController
@@ -115,10 +116,15 @@ public class MainController implements ActionListener {
         systemPrincipal.btnActualizarProveedor.addActionListener(this);
         systemPrincipal.btnEliminarProveedor.addActionListener(this);
         systemPrincipal.btnLimpiarFieldsProveedor.addActionListener(this);
+        systemPrincipal.tableProveedor.setModel(tableModelSupplier);
+        loadModelSupplier();
+        systemPrincipal.tableProveedor.addMouseListener(adapter);
+        systemPrincipal.tableProveedor.setEnabled(false);
     }
 
     /**
-     * Permite establecer las columnas con su respectivo nombre
+     * Permite establecer las columnas con su respectivo nombre para Customer o
+     * tabla clientes
      */
     private void loadModelCustomer() {
         tableModelCustomer.addColumn("Identificación");
@@ -131,11 +137,25 @@ public class MainController implements ActionListener {
     }
 
     /**
+     * Permite establecer las columnas con su respectivo nombre para Supplier o
+     * tabla proveedor
+     */
+    private void loadModelSupplier() {
+        tableModelSupplier.addColumn("RUT");
+        tableModelSupplier.addColumn("Nombre");
+        tableModelSupplier.addColumn("Teléfono");
+        tableModelSupplier.addColumn("Email");
+        tableModelSupplier.addColumn("Dirección");
+        tableModelSupplier.addColumn("Razón social");
+        addListTableModelSupplier();
+    }
+
+    /**
      * Permite agregar los registros obtenidos del findAll a la tabla Clientes
      */
     private void addListTableModelCustomer() {
         List<Customer> listCustomer = customerImpl.findAll(customer);
-        tableModelCustomer.setRowCount(0);
+        tableModelCustomer.setRowCount(0); // Cuando se ejecuta permite comenzar las filas desde la posicion 0, asi no se repiten cada vez que se llame
         for (Customer cstmr : listCustomer) {
             identificationCustomer = cstmr.getIdentification();
             nameCustomer = cstmr.getName();
@@ -145,6 +165,24 @@ public class MainController implements ActionListener {
             razonSocialCustomer = cstmr.getRazonSocial();
             Object[] row = {identificationCustomer, nameCustomer, phoneNumberCustomer, emailCustomer, addressCustomer, razonSocialCustomer};
             tableModelCustomer.addRow(row);
+        }
+    }
+
+    /**
+     * Permite agregar los registros obtenidos del findAll a la tabla Proveedor
+     */
+    private void addListTableModelSupplier() {
+        List<Supplier> listSupplier = supplierImpl.findAll(supplier);
+        tableModelSupplier.setRowCount(0); // Cuando se ejecuta permite comenzar las filas desde la posicion 0, asi no se repiten cada vez que se llame
+        for (Supplier sup : listSupplier) {
+            rutSupplier = sup.getRut();
+            nameSupplier = sup.getName();
+            phoneNumberSupplier = sup.getPhoneNumber();
+            emailSupplier = sup.getEmail();
+            addressSupplier = sup.getAddress();
+            razonSocialSupplier = sup.getRazonSocial();
+            Object[] row = {rutSupplier, nameSupplier, phoneNumberSupplier, emailSupplier, addressSupplier, razonSocialSupplier};
+            tableModelSupplier.addRow(row);
         }
     }
 
@@ -168,6 +206,25 @@ public class MainController implements ActionListener {
                         systemPrincipal.fieldEmailClientes.setText(customer.getEmail());
                         systemPrincipal.fieldDireccionClientes.setText(customer.getAddress());
                         systemPrincipal.fieldRazonSocialClientes.setText(customer.getRazonSocial());
+                    }
+                    case 2 ->
+                        JOptionPane.showMessageDialog(null, "Problema al seleccionar el registro");
+                    case 0 ->
+                        JOptionPane.showMessageDialog(null, "Problemas en la conexión");
+                }
+            }
+            if (systemPrincipal.tableProveedor.rowAtPoint(e.getPoint()) != -1) {
+                int index = systemPrincipal.tableProveedor.rowAtPoint(e.getPoint());
+                supplier.setRut(systemPrincipal.tableProveedor.getValueAt(index, 0).toString());
+                switch (supplierImpl.findById(supplier)) {
+                    case 1 -> {
+                        systemPrincipal.fieldIdProveedor.setText(String.valueOf(supplier.getIdSupplier()));
+                        systemPrincipal.fieldRutProveedor.setText(supplier.getRut());
+                        systemPrincipal.fieldNombreProveedor.setText(supplier.getName());
+                        systemPrincipal.fieldTelefonoProveedor.setText(supplier.getPhoneNumber());
+                        systemPrincipal.fieldEmailProveedor.setText(supplier.getEmail());
+                        systemPrincipal.fieldDireccionProveedor.setText(supplier.getAddress());
+                        systemPrincipal.fieldRazonSocialProveedor.setText(supplier.getRazonSocial());
                     }
                     case 2 ->
                         JOptionPane.showMessageDialog(null, "Problema al seleccionar el registro");
@@ -312,7 +369,7 @@ public class MainController implements ActionListener {
                         case 0 ->
                             JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                     }
-                    addListTableModelCustomer(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro                    
+                    addListTableModelSupplier(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro                    
                 }
                 case 2 ->
                     JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");

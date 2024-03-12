@@ -133,7 +133,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     @Override
     public List<Customer> findAll(Customer t) {
         conn = DatabaseConnection.getInstance().getConnection();
-        List<Customer> customer = new ArrayList<>();
+        List<Customer> customerList = new ArrayList<>();
         try {
             ps = conn.prepareStatement(selectAll);
             rs = ps.executeQuery();
@@ -147,7 +147,7 @@ public class CustomerDAOImpl implements CustomerDAO {
                 String razonSocial = rs.getString("razon_social");
                 Date date = rs.getDate("fecha");
                 t = new Customer(id, identification, name, phoneNumber, email, address, razonSocial, date);
-                customer.add(t);
+                customerList.add(t);
             }
         } catch (SQLException ex) {
             System.err.println("No se pudo realizar la conexión, " + ex);
@@ -155,7 +155,7 @@ public class CustomerDAOImpl implements CustomerDAO {
             closeResources(ps, rs);
             DatabaseConnection.getInstance().closeConnection();
         }
-        return customer;
+        return customerList;
     }
 
     private void closeResources(PreparedStatement ps, ResultSet rs) {
