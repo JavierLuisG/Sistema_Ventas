@@ -59,6 +59,7 @@ public class MainController implements ActionListener {
      */
     public MainController(LoginView loginView) {
         this.loginView = loginView;
+        systemPrincipal = new SystemPrincipalView();
         /* Inicializar user y userImpl y generar las acciones de los botones en el login */
         user = new User(); // Se inicializa con el constructor
         userImpl = new UserDAOImpl(); // Se inicializa con el constructor
@@ -411,6 +412,28 @@ public class MainController implements ActionListener {
             } else {
                 JOptionPane.showMessageDialog(null, "Seleccione primero un registro para actualizar");
             }
+        }
+        if (e.getSource() == systemPrincipal.btnEliminarProveedor) {
+            if (supplier.getIdSupplier() != 0) { // confirma que primero haya sido seleccionado un registro
+                if (JOptionPane.showConfirmDialog(null, "¿Seguro de eliminar el registro?", "Eliminar registro proveedor", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    switch (supplierImpl.delete(supplier)) {
+                        case 1 -> {
+                            JOptionPane.showMessageDialog(null, "Registro de proveedor con RUT " + supplier.getRut() + " eliminado");
+                            toCleanSupplier();
+                        }
+                        case 2 ->
+                            JOptionPane.showMessageDialog(null, "Problema al eliminar el registro");
+                        case 0 ->
+                            JOptionPane.showMessageDialog(null, "Problema en la conexión");
+                    }
+                    addListTableModelSupplier(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Seleccione primero un registro para eliminar");
+            }
+        }
+        if (e.getSource() == systemPrincipal.btnLimpiarFieldsProveedor) {
+            toCleanSupplier();
         }
     }
 

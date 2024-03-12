@@ -22,6 +22,7 @@ public class SupplierDAOImpl implements SupplierDAO {
     private final String selectOne = "SELECT * FROM proveedores WHERE rut = ?";
     private final String selectAll = "SELECT * FROM proveedores";
     private final String modify = "UPDATE proveedores SET rut=?,nombre=?,telefono=?,email=?,direccion=?,razon_social=? WHERE id_proveedores = ?";
+    private final String erase = "DELETE FROM proveedores WHERE id_proveedores = ?";
 
     @Override
     public int insert(Supplier t) {
@@ -80,7 +81,22 @@ public class SupplierDAOImpl implements SupplierDAO {
 
     @Override
     public int delete(Supplier t) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        conn = DatabaseConnection.getInstance().getConnection();
+        try {
+            ps = conn.prepareStatement(erase);
+            ps.setInt(1, t.getIdSupplier());
+            if (ps.executeUpdate() > 0) {
+                return 1;
+            } else {
+                return 2;
+            }
+        } catch (SQLException ex) {
+            System.err.println("No se pudo realizar la conexión, " + ex);
+            return 0;
+        } finally {
+            closeResources(ps, rs);
+            DatabaseConnection.getInstance().closeConnection();
+        }
     }
 
     @Override
