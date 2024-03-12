@@ -377,6 +377,41 @@ public class MainController implements ActionListener {
                     JOptionPane.showMessageDialog(null, "Ingrese un RUT numérico");
             }
         }
+        if (e.getSource() == systemPrincipal.btnActualizarProveedor) {
+            if (supplier.getIdSupplier() != 0) { // Confirma que primero haya sido seleccionado un registro
+                switch (validationEnteredDataSupplier()) {
+                    case 1 -> {
+                        supplier.setRut(rutSupplier);
+                        supplier.setName(nameSupplier);
+                        supplier.setPhoneNumber(phoneNumberSupplier);
+                        supplier.setEmail(emailSupplier);
+                        supplier.setAddress(addressSupplier);
+                        supplier.setRazonSocial(razonSocialSupplier);
+                        switch (supplierImpl.update(supplier)) {
+                            case 1 -> {
+                                JOptionPane.showMessageDialog(null, "Registro proveedor actualizado");
+                                toCleanSupplier();
+                            }
+                            case 2 ->
+                                JOptionPane.showMessageDialog(null, "No se realizó la actualización");
+                            case 3 ->
+                                JOptionPane.showMessageDialog(null, "N° identificación ya registrado");
+                            case 4 ->
+                                JOptionPane.showMessageDialog(null, "Ingrese correctamente los valores solicitados");
+                            case 0 ->
+                                JOptionPane.showMessageDialog(null, "Problemas en la conexión");
+                        }
+                        addListTableModelSupplier(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
+                    }
+                    case 2 ->
+                        JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
+                    case 0 ->
+                        JOptionPane.showMessageDialog(null, "Ingrese un RUT numérico");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Seleccione primero un registro para actualizar");
+            }
+        }
     }
 
     /**

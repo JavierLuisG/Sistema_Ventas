@@ -117,6 +117,7 @@ public class CustomerDAOImpl implements CustomerDAO {
                 t.setEmail(rs.getString("email"));
                 t.setAddress(rs.getString("direccion"));
                 t.setRazonSocial(rs.getString("razon_social"));
+                t.setDate(rs.getDate("fecha"));
                 return 1;
             } else {
                 return 2; // CDU: puede aparecer en la tabla pero en la base de datos no existe ese registro
