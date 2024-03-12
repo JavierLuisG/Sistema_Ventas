@@ -102,7 +102,7 @@ public class MainController implements ActionListener {
         /* Asignar el model a la tabla correspondiente y asignar las columnas con sus filas*/
         systemPrincipal.tableClientes.setModel(tableModelCustomer);
         loadModelCustomer();
-        systemPrincipal.tableClientes.addMouseListener(adapter); // Dar acción al mouse para seleccionar la fila de la tabla
+        systemPrincipal.tableClientes.addMouseListener(adapterCustomer); // Dar acción al mouse para seleccionar la fila de la tabla
         systemPrincipal.tableClientes.setEnabled(false); // No permite modificar los valores en la tabla
     }
 
@@ -119,7 +119,7 @@ public class MainController implements ActionListener {
         systemPrincipal.btnLimpiarFieldsProveedor.addActionListener(this);
         systemPrincipal.tableProveedor.setModel(tableModelSupplier);
         loadModelSupplier();
-        systemPrincipal.tableProveedor.addMouseListener(adapter);
+        systemPrincipal.tableProveedor.addMouseListener(adapterSupplier);
         systemPrincipal.tableProveedor.setEnabled(false);
     }
 
@@ -188,11 +188,11 @@ public class MainController implements ActionListener {
     }
 
     /**
-     * Permite seleccionar la fila de la tabla y generar el evento... Así como
-     * el ActionEvent para los botones. Para eliminar un registro lo hago por
-     * medio del identification de Customer
+     * Permite seleccionar la fila de la tabla CLIENTES y generar el evento...
+     * Así como el ActionEvent para los botones. Para eliminar un registro lo
+     * hago por medio del identification de Customer.
      */
-    MouseAdapter adapter = new MouseAdapter() {
+    MouseAdapter adapterCustomer = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
             if (systemPrincipal.tableClientes.rowAtPoint(e.getPoint()) != -1) {
@@ -214,6 +214,17 @@ public class MainController implements ActionListener {
                         JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                 }
             }
+        }
+    };
+
+    /**
+     * Permite seleccionar la fila de la tabla PROVEEDOR y generar el evento...
+     * Así como el ActionEvent para los botones. Para eliminar un registro lo
+     * hago por medio del identification de Customer
+     */
+    MouseAdapter adapterSupplier = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
             if (systemPrincipal.tableProveedor.rowAtPoint(e.getPoint()) != -1) {
                 int index = systemPrincipal.tableProveedor.rowAtPoint(e.getPoint());
                 supplier.setRut(systemPrincipal.tableProveedor.getValueAt(index, 0).toString());
