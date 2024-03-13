@@ -18,7 +18,7 @@ public class SupplierDAOImpl implements SupplierDAO {
     private PreparedStatement ps = null;
     private ResultSet rs = null;
 
-    private final String create = "INSERT INTO proveedores (rut, nombre, telefono, email, direccion, razon_social) values (?,?,?,?,?,?)";
+    private final String create = "INSERT INTO proveedores (rut, nombre, telefono, email, direccion, razon_social) VALUES (?,?,?,?,?,?)";
     private final String selectOne = "SELECT * FROM proveedores WHERE rut = ?";
     private final String selectAll = "SELECT * FROM proveedores";
     private final String modify = "UPDATE proveedores SET rut=?,nombre=?,telefono=?,email=?,direccion=?,razon_social=? WHERE id_proveedores = ?";
