@@ -1,9 +1,11 @@
 package com.proyect.sistemaventas.controller;
 
 import com.proyect.sistemaventas.dal.dao.implement.CustomerDAOImpl;
+import com.proyect.sistemaventas.dal.dao.implement.ProductDAOImpl;
 import com.proyect.sistemaventas.dal.dao.implement.SupplierDAOImpl;
 import com.proyect.sistemaventas.dal.dao.implement.UserDAOImpl;
 import com.proyect.sistemaventas.model.Customer;
+import com.proyect.sistemaventas.model.Product;
 import com.proyect.sistemaventas.model.Supplier;
 import com.proyect.sistemaventas.model.User;
 import com.proyect.sistemaventas.view.LoginView;
@@ -34,6 +36,10 @@ public class MainController implements ActionListener {
     private Supplier supplier;
     private SupplierDAOImpl supplierImpl;
 
+    // Product
+    private Product product;
+    private ProductDAOImpl productImpl;
+
     /* Variables de Customer */
     private String identificationCustomer;
     private String nameCustomer;
@@ -51,6 +57,13 @@ public class MainController implements ActionListener {
     private String addressSupplier;
     private String razonSocialSupplier;
     private final DefaultTableModel tableModelSupplier = new DefaultTableModel();
+
+    /* Variables de Product */
+    private String codeProduct;
+    private String nameProduct;
+    private int countProduct;
+    private float priceProduct;
+    private String supplierProduct;
 
     /**
      * Constructor del MainController
@@ -86,6 +99,7 @@ public class MainController implements ActionListener {
         systemPrincipal.setVisible(true);
         startCustomer();
         startSupplier();
+        startProduct();
     }
 
     /**
@@ -121,6 +135,13 @@ public class MainController implements ActionListener {
         loadModelSupplier();
         systemPrincipal.tableProveedor.addMouseListener(adapterSupplier);
         systemPrincipal.tableProveedor.setEnabled(false);
+    }
+
+    private void startProduct() {
+        product = new Product();
+        productImpl = new ProductDAOImpl();
+        systemPrincipal.comboBoxProveedorProductos.setEditable(true); // Poder escribir dentro del comboBox
+        systemPrincipal.btnGuardarProductos.addActionListener(this);
     }
 
     /**
@@ -446,6 +467,38 @@ public class MainController implements ActionListener {
         if (e.getSource() == systemPrincipal.btnLimpiarFieldsProveedor) {
             toCleanSupplier();
         }
+        /**
+         * ActionEnvent de SYSTEMPRINCIPAL - Product
+         */
+        if (e.getSource() == systemPrincipal.btnGuardarProductos) {
+            switch (validationEnteredDataProduct()) {
+                case 1 -> {
+                    product.setCode(codeProduct);
+                    product.setName(nameProduct);
+                    product.setCount(countProduct);
+                    product.setPrice(priceProduct);
+                    product.setSupplier(supplierProduct);
+                    switch (productImpl.insert(product)) {
+                        case 1 -> {
+                            JOptionPane.showMessageDialog(null, "Registro producto guardado");
+                            toCleanProduct();
+                        }
+                        case 2 ->
+                            JOptionPane.showMessageDialog(null, "No se realizó el registro");
+                        case 3 ->
+                            JOptionPane.showMessageDialog(null, "Código ya registrado");
+                        case 0 ->
+                            JOptionPane.showMessageDialog(null, "Problemas en la conexión");
+                    }
+                }
+                case 2 ->
+                    JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
+                case 3 -> 
+                    JOptionPane.showMessageDialog(null, "Precio o Cantidad invalidos, ingrese valores numéricos");
+                case 0 ->
+                    JOptionPane.showMessageDialog(null, "Código invalido, ingrese valores numéricos");
+            }
+        }
     }
 
     /**
@@ -478,6 +531,21 @@ public class MainController implements ActionListener {
         // Quitar el valor de identification y idCustomer para que no pueda eliminar ni actualizar 
         supplier.setIdSupplier(0);
         supplier.setRut(null);
+    }
+
+    /**
+     * Limpiar los campos de Product
+     */
+    private void toCleanProduct() {
+        systemPrincipal.fieldCodigoProductos.setText("");
+        systemPrincipal.fieldNombreProductos.setText("");
+        systemPrincipal.fieldCantidadProductos.setText("");
+        systemPrincipal.fieldPrecioProductos.setText("");
+        systemPrincipal.comboBoxProveedorProductos.setSelectedItem("");
+        systemPrincipal.fieldIdProducto.setText("");
+        // Quitar el valor de Código y idProduct para que no pueda eliminar ni actualizar 
+        product.setIdProduct(0);
+        product.setCode(null);
     }
 
     /**
@@ -538,7 +606,34 @@ public class MainController implements ActionListener {
                 return 2; // Retorna 2 si no ingresó los valores solicitados
             }
         } else {
-            return 0; // Retorna 0 si no ingresó números en el N° identificacion
+            return 0; // Retorna 0 si no ingresó números en el RUT
+        }
+    }
+
+    /**
+     * Este método va para Product, obteniendo los datos ingresados en las
+     * field de Productos
+     *
+     * @return int indicando cual ha sido la verificación correspondiente
+     */
+    private int validationEnteredDataProduct() {
+        if (isNumeric(systemPrincipal.fieldCodigoProductos.getText().trim())) {
+            codeProduct = systemPrincipal.fieldCodigoProductos.getText().trim();            
+            if (isNumeric(systemPrincipal.fieldCantidadProductos.getText().trim()) && isNumeric(systemPrincipal.fieldPrecioProductos.getText().trim())) {
+                nameProduct = systemPrincipal.fieldNombreProductos.getText().trim();
+                countProduct = Integer.parseInt(systemPrincipal.fieldCantidadProductos.getText().trim());
+                priceProduct = Float.parseFloat(systemPrincipal.fieldPrecioProductos.getText().trim());
+                supplierProduct = systemPrincipal.comboBoxProveedorProductos.getSelectedItem().toString();
+                if (!nameProduct.isEmpty()) {
+                    return 1; // Retorna 1 si todos los valores están correctamente
+                } else {
+                    return 2; // Retorna 2 si no ingresó los valores solicitados
+                }
+            } else {
+                return 3; // Retorna 3 si no ingresó números en Cantidad y Precio 
+            }
+        } else {
+            return 0; // Retorna 0 si no ingresó números en el Código
         }
     }
 }
