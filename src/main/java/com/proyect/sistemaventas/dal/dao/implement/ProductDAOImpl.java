@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
+import javax.swing.JComboBox;
 
 public class ProductDAOImpl implements ProductDAO {
 
@@ -62,6 +63,28 @@ public class ProductDAOImpl implements ProductDAO {
     @Override
     public List<Product> findAll(Product t) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    /**
+     * Método que permite traer de la base de datos el nombre de todos los
+     * proveedores y agregarlos en el parametro proveedor
+     *
+     * @param proveedor es el comboBox creado en la GUI
+     */
+    public void selectAllNameSuppliers(JComboBox proveedor) {
+        conn = DatabaseConnection.getInstance().getConnection();
+        try {
+            ps = conn.prepareStatement("SELECT nombre FROM proveedores");
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                proveedor.addItem(rs.getString("nombre"));
+            }
+        } catch (SQLException ex) {
+            System.err.println("No se pudo realizar la conexión, " + ex);
+        } finally {
+            closeResources(ps, rs);
+            DatabaseConnection.getInstance().closeConnection();
+        }
     }
 
     private void closeResources(PreparedStatement ps, ResultSet rs) {

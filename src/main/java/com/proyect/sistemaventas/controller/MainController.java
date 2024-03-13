@@ -64,6 +64,7 @@ public class MainController implements ActionListener {
     private int countProduct;
     private float priceProduct;
     private String supplierProduct;
+    private final String firstItemComboBox = "Seleccionar";
 
     /**
      * Constructor del MainController
@@ -137,11 +138,25 @@ public class MainController implements ActionListener {
         systemPrincipal.tableProveedor.setEnabled(false);
     }
 
+    /**
+     * Inicializar product y productImpl y generar las acciones de los botones
+     * de Producto
+     */
     private void startProduct() {
         product = new Product();
         productImpl = new ProductDAOImpl();
-        systemPrincipal.comboBoxProveedorProductos.setEditable(true); // Poder escribir dentro del comboBox
+        updateComoBoxSupplierOfProduct();
         systemPrincipal.btnGuardarProductos.addActionListener(this);
+    }
+
+    /**
+     * Permite obtener los datos que se generaron en selecAllNameSuppliers y
+     * agregarlos en el comboBoxProveedorProductos
+     */
+    private void updateComoBoxSupplierOfProduct() {
+        systemPrincipal.comboBoxProveedorProductos.removeAllItems(); // Permite borrar la info anterior y asi mostrar la info actualizada
+        systemPrincipal.comboBoxProveedorProductos.addItem(firstItemComboBox); // Primer item para diferenciar de los proveedores 
+        productImpl.selectAllNameSuppliers(systemPrincipal.comboBoxProveedorProductos);
     }
 
     /**
@@ -402,7 +417,8 @@ public class MainController implements ActionListener {
                         case 0 ->
                             JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                     }
-                    addListTableModelSupplier(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro                    
+                    addListTableModelSupplier(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
+                    updateComoBoxSupplierOfProduct(); // Actualizar el comboBox ya que trae el nombre de todos los proveedores
                 }
                 case 2 ->
                     JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
@@ -435,6 +451,7 @@ public class MainController implements ActionListener {
                                 JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                         }
                         addListTableModelSupplier(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
+                        updateComoBoxSupplierOfProduct(); // Actualizar el comboBox ya que trae el nombre de todos los proveedores
                     }
                     case 2 ->
                         JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
@@ -459,6 +476,7 @@ public class MainController implements ActionListener {
                             JOptionPane.showMessageDialog(null, "Problema en la conexión");
                     }
                     addListTableModelSupplier(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
+                    updateComoBoxSupplierOfProduct(); // Actualizar el comboBox ya que trae el nombre de todos los proveedores
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "Seleccione primero un registro para eliminar");
@@ -493,7 +511,7 @@ public class MainController implements ActionListener {
                 }
                 case 2 ->
                     JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
-                case 3 -> 
+                case 3 ->
                     JOptionPane.showMessageDialog(null, "Precio o Cantidad invalidos, ingrese valores numéricos");
                 case 0 ->
                     JOptionPane.showMessageDialog(null, "Código invalido, ingrese valores numéricos");
@@ -541,7 +559,7 @@ public class MainController implements ActionListener {
         systemPrincipal.fieldNombreProductos.setText("");
         systemPrincipal.fieldCantidadProductos.setText("");
         systemPrincipal.fieldPrecioProductos.setText("");
-        systemPrincipal.comboBoxProveedorProductos.setSelectedItem("");
+        systemPrincipal.comboBoxProveedorProductos.setSelectedIndex(0);
         systemPrincipal.fieldIdProducto.setText("");
         // Quitar el valor de Código y idProduct para que no pueda eliminar ni actualizar 
         product.setIdProduct(0);
@@ -611,20 +629,20 @@ public class MainController implements ActionListener {
     }
 
     /**
-     * Este método va para Product, obteniendo los datos ingresados en las
-     * field de Productos
+     * Este método va para Product, obteniendo los datos ingresados en las field
+     * de Productos
      *
      * @return int indicando cual ha sido la verificación correspondiente
      */
     private int validationEnteredDataProduct() {
         if (isNumeric(systemPrincipal.fieldCodigoProductos.getText().trim())) {
-            codeProduct = systemPrincipal.fieldCodigoProductos.getText().trim();            
             if (isNumeric(systemPrincipal.fieldCantidadProductos.getText().trim()) && isNumeric(systemPrincipal.fieldPrecioProductos.getText().trim())) {
-                nameProduct = systemPrincipal.fieldNombreProductos.getText().trim();
-                countProduct = Integer.parseInt(systemPrincipal.fieldCantidadProductos.getText().trim());
-                priceProduct = Float.parseFloat(systemPrincipal.fieldPrecioProductos.getText().trim());
-                supplierProduct = systemPrincipal.comboBoxProveedorProductos.getSelectedItem().toString();
-                if (!nameProduct.isEmpty()) {
+                if (!systemPrincipal.fieldNombreProductos.getText().trim().isEmpty() && !systemPrincipal.comboBoxProveedorProductos.getSelectedItem().toString().equals(firstItemComboBox)) {
+                    codeProduct = systemPrincipal.fieldCodigoProductos.getText().trim();
+                    nameProduct = systemPrincipal.fieldNombreProductos.getText().trim();
+                    countProduct = Integer.parseInt(systemPrincipal.fieldCantidadProductos.getText().trim());
+                    priceProduct = Float.parseFloat(systemPrincipal.fieldPrecioProductos.getText().trim());
+                    supplierProduct = systemPrincipal.comboBoxProveedorProductos.getSelectedItem().toString();
                     return 1; // Retorna 1 si todos los valores están correctamente
                 } else {
                     return 2; // Retorna 2 si no ingresó los valores solicitados
