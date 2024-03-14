@@ -4,12 +4,13 @@ import com.proyect.sistemaventas.dal.DatabaseConnection;
 import com.proyect.sistemaventas.dal.dao.ProductDAO;
 import com.proyect.sistemaventas.model.Product;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JComboBox;
 
 public class ProductDAOImpl implements ProductDAO {
 
@@ -17,7 +18,8 @@ public class ProductDAOImpl implements ProductDAO {
     private PreparedStatement ps = null;
     private ResultSet rs = null;
 
-    private final String create = "INSERT INTO productos (codigo, nombre, stock, precio, proveedor) VALUES (?,?,?,?,?)";
+    private final String create = "INSERT INTO productos (codigo, nombre, cantidad, precio, proveedor) VALUES (?,?,?,?,?)";
+    private final String selectAll = "SELECT a.id_productos, a.codigo codigo, a.nombre nombre, a.cantidad cantidad, a.precio precio, b.nombre proveedor, a.fecha fecha FROM productos a INNER JOIN proveedores b ON a.proveedor = b.id_proveedores";
 
     @Override
     public int insert(Product t) {
@@ -28,7 +30,7 @@ public class ProductDAOImpl implements ProductDAO {
             ps.setString(2, t.getName());
             ps.setInt(3, t.getCount());
             ps.setFloat(4, t.getPrice());
-            ps.setString(5, t.getSupplier());
+            ps.setInt(5, Integer.parseInt(t.getSupplier())); // Se convierte en int para enviar a la base de datos 
             if (ps.executeUpdate() > 0) {
                 return 1;
             } else {
@@ -62,22 +64,21 @@ public class ProductDAOImpl implements ProductDAO {
 
     @Override
     public List<Product> findAll(Product t) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    /**
-     * Método que permite traer de la base de datos el nombre de todos los
-     * proveedores y agregarlos en el parametro proveedor
-     *
-     * @param proveedor es el comboBox creado en la GUI
-     */
-    public void selectAllNameSuppliers(JComboBox proveedor) {
         conn = DatabaseConnection.getInstance().getConnection();
+        List<Product> productList = new ArrayList<>();
         try {
-            ps = conn.prepareStatement("SELECT nombre FROM proveedores");
+            ps = conn.prepareStatement(selectAll);
             rs = ps.executeQuery();
             while (rs.next()) {
-                proveedor.addItem(rs.getString("nombre"));
+                int id = rs.getInt("id_productos");
+                String code = rs.getString("codigo");
+                String name = rs.getString("nombre");
+                int count = rs.getInt("cantidad");
+                float price = rs.getFloat("precio");
+                String supp = rs.getString("proveedor");
+                Date date = rs.getDate("fecha");
+                t = new Product(id, code, name, count, price, supp, date);
+                productList.add(t);
             }
         } catch (SQLException ex) {
             System.err.println("No se pudo realizar la conexión, " + ex);
@@ -85,6 +86,7 @@ public class ProductDAOImpl implements ProductDAO {
             closeResources(ps, rs);
             DatabaseConnection.getInstance().closeConnection();
         }
+        return productList;
     }
 
     private void closeResources(PreparedStatement ps, ResultSet rs) {

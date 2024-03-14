@@ -48,6 +48,7 @@ public class MainController implements ActionListener {
     private String addressCustomer;
     private String razonSocialCustomer;
     private final DefaultTableModel tableModelCustomer = new DefaultTableModel();
+    private List<Customer> listCustomer;
 
     /* Variables de Supplier */
     private String rutSupplier;
@@ -57,6 +58,7 @@ public class MainController implements ActionListener {
     private String addressSupplier;
     private String razonSocialSupplier;
     private final DefaultTableModel tableModelSupplier = new DefaultTableModel();
+    private List<Supplier> listSupplier; // La puse global para poder agregar los nombre al comboBox de productos
 
     /* Variables de Product */
     private String codeProduct;
@@ -65,6 +67,8 @@ public class MainController implements ActionListener {
     private float priceProduct;
     private String supplierProduct;
     private final String firstItemComboBox = "Seleccionar";
+    private final DefaultTableModel tableModelProduct = new DefaultTableModel();
+    private List<Product> listProduct;
 
     /**
      * Constructor del MainController
@@ -147,16 +151,23 @@ public class MainController implements ActionListener {
         productImpl = new ProductDAOImpl();
         updateComoBoxSupplierOfProduct();
         systemPrincipal.btnGuardarProductos.addActionListener(this);
+        systemPrincipal.tableProductos.setModel(tableModelProduct);
+        loadModelProduct();
+        systemPrincipal.tableProductos.setEnabled(false);
     }
 
     /**
-     * Permite obtener los datos que se generaron en selecAllNameSuppliers y
-     * agregarlos en el comboBoxProveedorProductos
+     * Permite obtener los datos que se generaron en listSupplier y agregarlos
+     * en el comboBoxProveedorProductos
      */
     private void updateComoBoxSupplierOfProduct() {
         systemPrincipal.comboBoxProveedorProductos.removeAllItems(); // Permite borrar la info anterior y asi mostrar la info actualizada
-        systemPrincipal.comboBoxProveedorProductos.addItem(firstItemComboBox); // Primer item para diferenciar de los proveedores 
-        productImpl.selectAllNameSuppliers(systemPrincipal.comboBoxProveedorProductos);
+        systemPrincipal.comboBoxProveedorProductos.addItem(firstItemComboBox); // Primer item para diferenciar de los proveedores         
+        // El for permite agregar el nombre de los proveedores al comboBox obtenidos de la listSupplier
+        for (Supplier sup : listSupplier) {
+            nameSupplier = sup.getName();
+            systemPrincipal.comboBoxProveedorProductos.addItem(nameSupplier);
+        }
     }
 
     /**
@@ -188,10 +199,23 @@ public class MainController implements ActionListener {
     }
 
     /**
+     * Permite establecer las columnas con su respectivo nombre para Product o
+     * tabla productos
+     */
+    private void loadModelProduct() {
+        tableModelProduct.addColumn("Código");
+        tableModelProduct.addColumn("Nombre");
+        tableModelProduct.addColumn("Cantidad");
+        tableModelProduct.addColumn("Precio");
+        tableModelProduct.addColumn("Proveedor");
+        addListTableModelProduct();
+    }
+
+    /**
      * Permite agregar los registros obtenidos del findAll a la tabla Clientes
      */
     private void addListTableModelCustomer() {
-        List<Customer> listCustomer = customerImpl.findAll(customer);
+        listCustomer = customerImpl.findAll(customer);
         tableModelCustomer.setRowCount(0); // Cuando se ejecuta permite comenzar las filas desde la posicion 0, asi no se repiten cada vez que se llame
         for (Customer cstmr : listCustomer) {
             identificationCustomer = cstmr.getIdentification();
@@ -209,7 +233,7 @@ public class MainController implements ActionListener {
      * Permite agregar los registros obtenidos del findAll a la tabla Proveedor
      */
     private void addListTableModelSupplier() {
-        List<Supplier> listSupplier = supplierImpl.findAll(supplier);
+        listSupplier = supplierImpl.findAll(supplier);
         tableModelSupplier.setRowCount(0); // Cuando se ejecuta permite comenzar las filas desde la posicion 0, asi no se repiten cada vez que se llame
         for (Supplier sup : listSupplier) {
             rutSupplier = sup.getRut();
@@ -220,6 +244,23 @@ public class MainController implements ActionListener {
             razonSocialSupplier = sup.getRazonSocial();
             Object[] row = {rutSupplier, nameSupplier, phoneNumberSupplier, emailSupplier, addressSupplier, razonSocialSupplier};
             tableModelSupplier.addRow(row);
+        }
+    }
+
+    /**
+     * Permite agregar los registros obtenidos del findAll a la tabla Productos
+     */
+    private void addListTableModelProduct() {
+        listProduct = productImpl.findAll(product);
+        tableModelProduct.setRowCount(0);
+        for (Product pro : listProduct) {
+            codeProduct = pro.getCode();
+            nameProduct = pro.getName();
+            countProduct = pro.getCount();
+            priceProduct = pro.getPrice();
+            supplierProduct = pro.getSupplier();
+            Object[] row = {codeProduct, nameProduct, countProduct, priceProduct, supplierProduct};
+            tableModelProduct.addRow(row);
         }
     }
 
@@ -419,6 +460,7 @@ public class MainController implements ActionListener {
                     }
                     addListTableModelSupplier(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
                     updateComoBoxSupplierOfProduct(); // Actualizar el comboBox ya que trae el nombre de todos los proveedores
+                    addListTableModelProduct();
                 }
                 case 2 ->
                     JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
@@ -452,6 +494,7 @@ public class MainController implements ActionListener {
                         }
                         addListTableModelSupplier(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
                         updateComoBoxSupplierOfProduct(); // Actualizar el comboBox ya que trae el nombre de todos los proveedores
+                        addListTableModelProduct();
                     }
                     case 2 ->
                         JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
@@ -477,6 +520,7 @@ public class MainController implements ActionListener {
                     }
                     addListTableModelSupplier(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
                     updateComoBoxSupplierOfProduct(); // Actualizar el comboBox ya que trae el nombre de todos los proveedores
+                    addListTableModelProduct();
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "Seleccione primero un registro para eliminar");
@@ -508,6 +552,7 @@ public class MainController implements ActionListener {
                         case 0 ->
                             JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                     }
+                    addListTableModelProduct();
                 }
                 case 2 ->
                     JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
@@ -577,6 +622,23 @@ public class MainController implements ActionListener {
     }
 
     /**
+     *
+     * @param name ingresa el nombre del proveedor seleccionado en la interfaz
+     * @return el id del proveedor seleccionado ya que en la base de datos está
+     * guardado como llave foranea el proveedor en la tabla de Productos, es
+     * decir, un int
+     */
+    private int findIdSupplierSelected(String name) {
+        int encontrado = 0;
+        for (Supplier suppList : listSupplier) {
+            if (name.equals(suppList.getName())) {
+                encontrado = suppList.getIdSupplier();
+            }
+        }
+        return encontrado;
+    }
+
+    /**
      * Este método va para Customer, obteniendo los datos ingresados en las
      * field de Clientes
      *
@@ -642,7 +704,8 @@ public class MainController implements ActionListener {
                     nameProduct = systemPrincipal.fieldNombreProductos.getText().trim();
                     countProduct = Integer.parseInt(systemPrincipal.fieldCantidadProductos.getText().trim());
                     priceProduct = Float.parseFloat(systemPrincipal.fieldPrecioProductos.getText().trim());
-                    supplierProduct = systemPrincipal.comboBoxProveedorProductos.getSelectedItem().toString();
+                    // Valor obtenido del comboBox y se pasa al id y luego se convierte en String para pasarlo a la variable supplier en Product
+                    supplierProduct = String.valueOf(findIdSupplierSelected(systemPrincipal.comboBoxProveedorProductos.getSelectedItem().toString())); 
                     return 1; // Retorna 1 si todos los valores están correctamente
                 } else {
                     return 2; // Retorna 2 si no ingresó los valores solicitados
