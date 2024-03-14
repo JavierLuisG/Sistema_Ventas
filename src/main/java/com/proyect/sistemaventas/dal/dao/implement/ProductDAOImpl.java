@@ -20,6 +20,7 @@ public class ProductDAOImpl implements ProductDAO {
 
     private final String create = "INSERT INTO productos (codigo, nombre, cantidad, precio, proveedor) VALUES (?,?,?,?,?)";
     private final String selectAll = "SELECT a.id_productos, a.codigo codigo, a.nombre nombre, a.cantidad cantidad, a.precio precio, b.nombre proveedor, a.fecha fecha FROM productos a INNER JOIN proveedores b ON a.proveedor = b.id_proveedores";
+    private final String selectOne = "SELECT a.id_productos, a.codigo codigo, a.nombre nombre, a.cantidad cantidad, a.precio precio, b.nombre proveedor, a.fecha fecha FROM productos a INNER JOIN proveedores b ON a.proveedor = b.id_proveedores WHERE a.codigo = ?";
 
     @Override
     public int insert(Product t) {
@@ -59,7 +60,30 @@ public class ProductDAOImpl implements ProductDAO {
 
     @Override
     public int findById(Product t) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        conn = DatabaseConnection.getInstance().getConnection();
+        try {
+            ps = conn.prepareStatement(selectOne);
+            ps.setString(1, t.getCode());
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                t.setIdProduct(rs.getInt("id_productos"));
+                t.setCode(rs.getString("codigo"));
+                t.setName(rs.getString("nombre"));
+                t.setCount(rs.getInt("cantidad"));
+                t.setPrice(rs.getFloat("precio"));
+                t.setSupplier(rs.getString("proveedor"));
+                t.setDate(rs.getDate("fecha"));
+                return 1;
+            } else {
+                return 2;
+            }
+        } catch (SQLException ex) {
+            System.err.println("No se pudo realizar la conexión, " + ex);
+            return 0;
+        } finally {
+            closeResources(ps, rs);
+            DatabaseConnection.getInstance().closeConnection();
+        }
     }
 
     @Override

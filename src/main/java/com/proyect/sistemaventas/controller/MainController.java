@@ -153,6 +153,7 @@ public class MainController implements ActionListener {
         systemPrincipal.btnGuardarProductos.addActionListener(this);
         systemPrincipal.tableProductos.setModel(tableModelProduct);
         loadModelProduct();
+        systemPrincipal.tableProductos.addMouseListener(adapterProduct);
         systemPrincipal.tableProductos.setEnabled(false);
     }
 
@@ -297,7 +298,7 @@ public class MainController implements ActionListener {
     /**
      * Permite seleccionar la fila de la tabla PROVEEDOR y generar el evento...
      * Así como el ActionEvent para los botones. Para eliminar un registro lo
-     * hago por medio del identification de Customer
+     * hago por medio del RUT de Supplier
      */
     MouseAdapter adapterSupplier = new MouseAdapter() {
         @Override
@@ -314,6 +315,35 @@ public class MainController implements ActionListener {
                         systemPrincipal.fieldEmailProveedor.setText(supplier.getEmail());
                         systemPrincipal.fieldDireccionProveedor.setText(supplier.getAddress());
                         systemPrincipal.fieldRazonSocialProveedor.setText(supplier.getRazonSocial());
+                    }
+                    case 2 ->
+                        JOptionPane.showMessageDialog(null, "Problema al seleccionar el registro");
+                    case 0 ->
+                        JOptionPane.showMessageDialog(null, "Problemas en la conexión");
+                }
+            }
+        }
+    };
+    
+    /**
+     * Permite seleccionar la fila de la tabla PRODUCTOS y generar el evento...
+     * Así como el ActionEvent para los botones. Para eliminar un registro lo
+     * hago por medio del code de Product
+     */
+    MouseAdapter adapterProduct = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (systemPrincipal.tableProductos.rowAtPoint(e.getPoint()) != -1) {
+                int index = systemPrincipal.tableProductos.rowAtPoint(e.getPoint());
+                product.setCode(systemPrincipal.tableProductos.getValueAt(index, 0).toString());
+                switch (productImpl.findById(product)) {
+                    case 1 -> {
+                        systemPrincipal.fieldIdProducto.setText(String.valueOf(product.getIdProduct()));
+                        systemPrincipal.fieldCodigoProductos.setText(product.getCode());
+                        systemPrincipal.fieldNombreProductos.setText(product.getName());
+                        systemPrincipal.fieldCantidadProductos.setText(String.valueOf(product.getCount()));
+                        systemPrincipal.fieldPrecioProductos.setText(String.valueOf(product.getPrice()));
+                        systemPrincipal.comboBoxProveedorProductos.setSelectedItem(product.getSupplier());
                     }
                     case 2 ->
                         JOptionPane.showMessageDialog(null, "Problema al seleccionar el registro");
