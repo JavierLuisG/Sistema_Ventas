@@ -1,5 +1,6 @@
 package com.proyect.sistemaventas.dal.dao.implement;
 
+import com.mysql.cj.jdbc.exceptions.MysqlDataTruncation;
 import com.proyect.sistemaventas.dal.DatabaseConnection;
 import com.proyect.sistemaventas.dal.dao.ProductDAO;
 import com.proyect.sistemaventas.model.Product;
@@ -21,6 +22,7 @@ public class ProductDAOImpl implements ProductDAO {
     private final String create = "INSERT INTO productos (codigo, nombre, cantidad, precio, proveedor) VALUES (?,?,?,?,?)";
     private final String selectAll = "SELECT a.id_productos, a.codigo codigo, a.nombre nombre, a.cantidad cantidad, a.precio precio, b.nombre proveedor, a.fecha fecha FROM productos a INNER JOIN proveedores b ON a.proveedor = b.id_proveedores";
     private final String selectOne = "SELECT a.id_productos, a.codigo codigo, a.nombre nombre, a.cantidad cantidad, a.precio precio, b.nombre proveedor, a.fecha fecha FROM productos a INNER JOIN proveedores b ON a.proveedor = b.id_proveedores WHERE a.codigo = ?";
+    private final String modify = "UPDATE productos SET codigo=?,nombre=?,cantidad=?,precio=?,proveedor=? WHERE id_productos=?";
 
     @Override
     public int insert(Product t) {
@@ -50,7 +52,31 @@ public class ProductDAOImpl implements ProductDAO {
 
     @Override
     public int update(Product t) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        conn = DatabaseConnection.getInstance().getConnection();
+        try {
+            ps = conn.prepareStatement(modify);
+            ps.setString(1, t.getCode());
+            ps.setString(2, t.getName());
+            ps.setInt(3, t.getCount());
+            ps.setFloat(4, t.getPrice());
+            ps.setInt(5, Integer.parseInt(t.getSupplier()));
+            ps.setInt(6, t.getIdProduct());
+            if (ps.executeUpdate() > 0) {
+                return 1;
+            } else {
+                return 2;
+            }
+        } catch (SQLIntegrityConstraintViolationException ex) { // CDU: RUT ya registrado, dato Unique Index
+            return 3;
+        } catch (MysqlDataTruncation ex) { // CDU: si ingresa mas de los caracteres permitidos
+            return 4;
+        } catch (SQLException ex) {
+            System.err.println("No se pudo realizar la conexión, " + ex);
+            return 0;
+        } finally {
+            closeResources(ps, rs);
+            DatabaseConnection.getInstance().closeConnection();
+        }
     }
 
     @Override
@@ -70,7 +96,7 @@ public class ProductDAOImpl implements ProductDAO {
                 t.setCode(rs.getString("codigo"));
                 t.setName(rs.getString("nombre"));
                 t.setCount(rs.getInt("cantidad"));
-                t.setPrice(rs.getFloat("precio"));
+                t.setPrice(rs.getInt("precio"));
                 t.setSupplier(rs.getString("proveedor"));
                 t.setDate(rs.getDate("fecha"));
                 return 1;
@@ -98,7 +124,7 @@ public class ProductDAOImpl implements ProductDAO {
                 String code = rs.getString("codigo");
                 String name = rs.getString("nombre");
                 int count = rs.getInt("cantidad");
-                float price = rs.getFloat("precio");
+                int price = rs.getInt("precio");
                 String supp = rs.getString("proveedor");
                 Date date = rs.getDate("fecha");
                 t = new Product(id, code, name, count, price, supp, date);

@@ -64,7 +64,7 @@ public class MainController implements ActionListener {
     private String codeProduct;
     private String nameProduct;
     private int countProduct;
-    private float priceProduct;
+    private int priceProduct;
     private String supplierProduct;
     private final String firstItemComboBox = "Seleccionar";
     private final DefaultTableModel tableModelProduct = new DefaultTableModel();
@@ -151,6 +151,7 @@ public class MainController implements ActionListener {
         productImpl = new ProductDAOImpl();
         updateComoBoxSupplierOfProduct();
         systemPrincipal.btnGuardarProductos.addActionListener(this);
+        systemPrincipal.btnActualizarProductos.addActionListener(this);
         systemPrincipal.tableProductos.setModel(tableModelProduct);
         loadModelProduct();
         systemPrincipal.tableProductos.addMouseListener(adapterProduct);
@@ -324,7 +325,7 @@ public class MainController implements ActionListener {
             }
         }
     };
-    
+
     /**
      * Permite seleccionar la fila de la tabla PRODUCTOS y generar el evento...
      * Así como el ActionEvent para los botones. Para eliminar un registro lo
@@ -490,7 +491,7 @@ public class MainController implements ActionListener {
                     }
                     addListTableModelSupplier(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
                     updateComoBoxSupplierOfProduct(); // Actualizar el comboBox ya que trae el nombre de todos los proveedores
-                    addListTableModelProduct();
+                    addListTableModelProduct(); // Actualizar la tabla producto
                 }
                 case 2 ->
                     JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
@@ -524,7 +525,7 @@ public class MainController implements ActionListener {
                         }
                         addListTableModelSupplier(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
                         updateComoBoxSupplierOfProduct(); // Actualizar el comboBox ya que trae el nombre de todos los proveedores
-                        addListTableModelProduct();
+                        addListTableModelProduct(); // Actualizar la tabla producto
                     }
                     case 2 ->
                         JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
@@ -550,7 +551,7 @@ public class MainController implements ActionListener {
                     }
                     addListTableModelSupplier(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
                     updateComoBoxSupplierOfProduct(); // Actualizar el comboBox ya que trae el nombre de todos los proveedores
-                    addListTableModelProduct();
+                    addListTableModelProduct(); // Actualizar la tabla producto
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "Seleccione primero un registro para eliminar");
@@ -582,7 +583,39 @@ public class MainController implements ActionListener {
                         case 0 ->
                             JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                     }
-                    addListTableModelProduct();
+                    addListTableModelProduct(); // actualizar la tabla producto
+                }
+                case 2 ->
+                    JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
+                case 3 ->
+                    JOptionPane.showMessageDialog(null, "Precio o Cantidad invalidos, ingrese valores numéricos");
+                case 0 ->
+                    JOptionPane.showMessageDialog(null, "Código invalido, ingrese valores numéricos");
+            }
+        }
+        if (e.getSource() == systemPrincipal.btnActualizarProductos) {
+            switch (validationEnteredDataProduct()) {
+                case 1 -> {
+                    product.setCode(codeProduct);
+                    product.setName(nameProduct);
+                    product.setCount(countProduct);
+                    product.setPrice(priceProduct);
+                    product.setSupplier(supplierProduct);
+                    switch (productImpl.update(product)) {
+                        case 1 -> {
+                            JOptionPane.showMessageDialog(null, "Registro producto actualizado");
+                            toCleanProduct();
+                        }
+                        case 2 ->
+                            JOptionPane.showMessageDialog(null, "No se realizó la actualización");
+                        case 3 ->
+                            JOptionPane.showMessageDialog(null, "N° identificación ya registrado");
+                        case 4 ->
+                            JOptionPane.showMessageDialog(null, "Ingrese correctamente los valores solicitados");
+                        case 0 ->
+                            JOptionPane.showMessageDialog(null, "Problemas en la conexión");
+                    }
+                    addListTableModelProduct(); // actualizar la tabla producto
                 }
                 case 2 ->
                     JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
@@ -733,9 +766,9 @@ public class MainController implements ActionListener {
                     codeProduct = systemPrincipal.fieldCodigoProductos.getText().trim();
                     nameProduct = systemPrincipal.fieldNombreProductos.getText().trim();
                     countProduct = Integer.parseInt(systemPrincipal.fieldCantidadProductos.getText().trim());
-                    priceProduct = Float.parseFloat(systemPrincipal.fieldPrecioProductos.getText().trim());
+                    priceProduct = Integer.parseInt(systemPrincipal.fieldPrecioProductos.getText().trim());
                     // Valor obtenido del comboBox y se pasa al id y luego se convierte en String para pasarlo a la variable supplier en Product
-                    supplierProduct = String.valueOf(findIdSupplierSelected(systemPrincipal.comboBoxProveedorProductos.getSelectedItem().toString())); 
+                    supplierProduct = String.valueOf(findIdSupplierSelected(systemPrincipal.comboBoxProveedorProductos.getSelectedItem().toString()));
                     return 1; // Retorna 1 si todos los valores están correctamente
                 } else {
                     return 2; // Retorna 2 si no ingresó los valores solicitados

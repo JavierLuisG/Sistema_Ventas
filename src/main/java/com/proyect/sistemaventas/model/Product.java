@@ -8,14 +8,14 @@ public class Product {
     private String code;
     private String name;
     private int count;
-    private float price;
+    private int price;
     private String supplier;
     private Date date;
 
     public Product() {
     }
 
-    public Product(int idProduct, String code, String name, int count, float price, String supplier, Date date) {
+    public Product(int idProduct, String code, String name, int count, int price, String supplier, Date date) {
         this.idProduct = idProduct;
         this.code = code;
         this.name = name;
@@ -57,11 +57,11 @@ public class Product {
         this.count = count;
     }
 
-    public float getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 

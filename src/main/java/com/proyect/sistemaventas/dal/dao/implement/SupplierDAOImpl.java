@@ -1,5 +1,6 @@
 package com.proyect.sistemaventas.dal.dao.implement;
 
+import com.mysql.cj.jdbc.exceptions.MysqlDataTruncation;
 import com.proyect.sistemaventas.dal.DatabaseConnection;
 import com.proyect.sistemaventas.dal.dao.SupplierDAO;
 import com.proyect.sistemaventas.model.Supplier;
@@ -70,6 +71,8 @@ public class SupplierDAOImpl implements SupplierDAO {
             }
         } catch (SQLIntegrityConstraintViolationException ex) { // CDU: RUT ya registrado, dato Unique Index
             return 3;
+        } catch (MysqlDataTruncation ex) { // CDU: si ingresa mas de los caracteres permitidos
+            return 4;
         } catch (SQLException ex) {
             System.err.println("No se pudo realizar la conexión, " + ex);
             return 0;
