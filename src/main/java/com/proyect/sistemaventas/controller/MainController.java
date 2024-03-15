@@ -181,10 +181,14 @@ public class MainController implements ActionListener {
     private void loadModelCustomer() {
         tableModelCustomer.addColumn("Identificación");
         tableModelCustomer.addColumn("Nombre");
-        tableModelCustomer.addColumn("Teléfono");
         tableModelCustomer.addColumn("Email");
+        tableModelCustomer.addColumn("Teléfono");
         tableModelCustomer.addColumn("Dirección");
         tableModelCustomer.addColumn("Razón social");
+        int width[] = {75,150,180,75,120,90};
+        for (int i = 0 ; i < 6 ; i++) {
+            systemPrincipal.tableClientes.getColumnModel().getColumn(i).setPreferredWidth(width[i]);
+        }
         addListTableModelCustomer(); // Asignar las filas según los datos traidos de la base de datos
     }
 
@@ -195,10 +199,14 @@ public class MainController implements ActionListener {
     private void loadModelSupplier() {
         tableModelSupplier.addColumn("RUT");
         tableModelSupplier.addColumn("Nombre");
-        tableModelSupplier.addColumn("Teléfono");
         tableModelSupplier.addColumn("Email");
+        tableModelSupplier.addColumn("Teléfono");
         tableModelSupplier.addColumn("Dirección");
         tableModelSupplier.addColumn("Razón social");
+        int width[] = {75,150,180,75,120,90};
+        for (int i = 0 ; i < 6 ; i++) {
+            systemPrincipal.tableProveedor.getColumnModel().getColumn(i).setPreferredWidth(width[i]);
+        }
         addListTableModelSupplier();
     }
 
@@ -209,9 +217,13 @@ public class MainController implements ActionListener {
     private void loadModelProduct() {
         tableModelProduct.addColumn("Código");
         tableModelProduct.addColumn("Nombre");
+        tableModelProduct.addColumn("Proveedor");
         tableModelProduct.addColumn("Cantidad");
         tableModelProduct.addColumn("Precio");
-        tableModelProduct.addColumn("Proveedor");
+        int width[] = {50,190,190,50,50};
+        for (int i = 0 ; i < 5 ; i++) {
+            systemPrincipal.tableProductos.getColumnModel().getColumn(i).setPreferredWidth(width[i]);
+        }
         addListTableModelProduct();
     }
 
@@ -228,7 +240,7 @@ public class MainController implements ActionListener {
             emailCustomer = cstmr.getEmail();
             addressCustomer = cstmr.getAddress();
             razonSocialCustomer = cstmr.getRazonSocial();
-            Object[] row = {identificationCustomer, nameCustomer, phoneNumberCustomer, emailCustomer, addressCustomer, razonSocialCustomer};
+            Object[] row = {identificationCustomer, nameCustomer, emailCustomer, phoneNumberCustomer, addressCustomer, razonSocialCustomer};
             tableModelCustomer.addRow(row);
         }
     }
@@ -246,7 +258,7 @@ public class MainController implements ActionListener {
             emailSupplier = sup.getEmail();
             addressSupplier = sup.getAddress();
             razonSocialSupplier = sup.getRazonSocial();
-            Object[] row = {rutSupplier, nameSupplier, phoneNumberSupplier, emailSupplier, addressSupplier, razonSocialSupplier};
+            Object[] row = {rutSupplier, nameSupplier, emailSupplier, phoneNumberSupplier, addressSupplier, razonSocialSupplier};
             tableModelSupplier.addRow(row);
         }
     }
@@ -263,7 +275,7 @@ public class MainController implements ActionListener {
             countProduct = pro.getCount();
             priceProduct = pro.getPrice();
             supplierProduct = pro.getSupplier();
-            Object[] row = {codeProduct, nameProduct, countProduct, priceProduct, supplierProduct};
+            Object[] row = {codeProduct, nameProduct, supplierProduct, countProduct, priceProduct};
             tableModelProduct.addRow(row);
         }
     }
