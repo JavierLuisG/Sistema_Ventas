@@ -152,6 +152,8 @@ public class MainController implements ActionListener {
         updateComoBoxSupplierOfProduct();
         systemPrincipal.btnGuardarProductos.addActionListener(this);
         systemPrincipal.btnActualizarProductos.addActionListener(this);
+        systemPrincipal.btnEliminarProductos.addActionListener(this);
+        systemPrincipal.btnLimpiarFieldsProductos.addActionListener(this);
         systemPrincipal.tableProductos.setModel(tableModelProduct);
         loadModelProduct();
         systemPrincipal.tableProductos.addMouseListener(adapterProduct);
@@ -292,6 +294,7 @@ public class MainController implements ActionListener {
                     case 0 ->
                         JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                 }
+                addListTableModelCustomer(); // Actualizar por si por ejemplo se presenta un case 2 CDU: se elimina en la base de datos, por ende en la aplicación aun sigue existiendo si no se actualiza
             }
         }
     };
@@ -322,6 +325,7 @@ public class MainController implements ActionListener {
                     case 0 ->
                         JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                 }
+                addListTableModelSupplier(); // Actualizar por si por ejemplo se presenta un case 2 CDU: se elimina en la base de datos, por ende en la aplicación aun sigue existiendo si no se actualiza 
             }
         }
     };
@@ -351,6 +355,7 @@ public class MainController implements ActionListener {
                     case 0 ->
                         JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                 }
+                addListTableModelProduct(); // Actualizar por si por ejemplo se presenta un case 2 CDU: se elimina en la base de datos, por ende en la aplicación aun sigue existiendo si no se actualiza
             }
         }
     };
@@ -464,6 +469,7 @@ public class MainController implements ActionListener {
         }
         if (e.getSource() == systemPrincipal.btnLimpiarFieldsClientes) {
             toCleanCustomer();
+            addListTableModelCustomer();
         }
         /**
          * ActionEnvent de SYSTEMPRINCIPAL - Supplier
@@ -559,6 +565,7 @@ public class MainController implements ActionListener {
         }
         if (e.getSource() == systemPrincipal.btnLimpiarFieldsProveedor) {
             toCleanSupplier();
+            addListTableModelSupplier();
         }
         /**
          * ActionEnvent de SYSTEMPRINCIPAL - Product
@@ -624,6 +631,29 @@ public class MainController implements ActionListener {
                 case 0 ->
                     JOptionPane.showMessageDialog(null, "Código invalido, ingrese valores numéricos");
             }
+        }
+        if (e.getSource() == systemPrincipal.btnEliminarProductos) {
+            if (product.getIdProduct() != 0) {
+                if (JOptionPane.showConfirmDialog(null, "¿Seguro de eliminar el registro?", "Eliminar registro producto", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    switch (productImpl.delete(product)) {
+                        case 1 -> {
+                            JOptionPane.showMessageDialog(null, "Registro de producto con N° código " + product.getCode() + " eliminado");
+                            toCleanProduct();
+                        }
+                        case 2 ->
+                            JOptionPane.showMessageDialog(null, "Problema al eliminar el registro");
+                        case 0 ->
+                            JOptionPane.showMessageDialog(null, "Problema en la conexión");
+                    }
+                    addListTableModelProduct(); // actualizar tabla de productos
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Seleccione primeno un registro para eliminar");
+            }
+        }
+        if (e.getSource() == systemPrincipal.btnLimpiarFieldsProductos) {
+            toCleanProduct();
+            addListTableModelProduct();
         }
     }
 

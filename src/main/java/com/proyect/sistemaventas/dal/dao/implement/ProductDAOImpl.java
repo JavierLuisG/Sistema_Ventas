@@ -23,6 +23,7 @@ public class ProductDAOImpl implements ProductDAO {
     private final String selectAll = "SELECT a.id_productos, a.codigo codigo, a.nombre nombre, a.cantidad cantidad, a.precio precio, b.nombre proveedor, a.fecha fecha FROM productos a INNER JOIN proveedores b ON a.proveedor = b.id_proveedores";
     private final String selectOne = "SELECT a.id_productos, a.codigo codigo, a.nombre nombre, a.cantidad cantidad, a.precio precio, b.nombre proveedor, a.fecha fecha FROM productos a INNER JOIN proveedores b ON a.proveedor = b.id_proveedores WHERE a.codigo = ?";
     private final String modify = "UPDATE productos SET codigo=?,nombre=?,cantidad=?,precio=?,proveedor=? WHERE id_productos=?";
+    private final String erase = "DELETE FROM productos WHERE id_productos = ?";
 
     @Override
     public int insert(Product t) {
@@ -81,7 +82,22 @@ public class ProductDAOImpl implements ProductDAO {
 
     @Override
     public int delete(Product t) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        conn = DatabaseConnection.getInstance().getConnection();
+        try {
+            ps = conn.prepareStatement(erase);
+            ps.setInt(1, t.getIdProduct());
+            if (ps.executeUpdate() > 0) {
+                return 1;
+            } else {
+                return 2;
+            }
+        } catch (SQLException ex) {
+            System.err.println("No se pudo realizar la conexión, " + ex);
+            return 0;
+        } finally {
+            closeResources(ps, rs);
+            DatabaseConnection.getInstance().closeConnection();
+        }
     }
 
     @Override
