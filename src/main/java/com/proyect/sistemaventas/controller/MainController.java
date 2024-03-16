@@ -102,6 +102,9 @@ public class MainController implements ActionListener {
         systemPrincipal.setResizable(false);
         systemPrincipal.setLocationRelativeTo(null);
         systemPrincipal.setVisible(true);
+        systemPrincipal.fieldIdClientes.setVisible(false);
+        systemPrincipal.fieldIdProveedor.setVisible(false);
+        systemPrincipal.fieldIdProducto.setVisible(false);
         startCustomer();
         startSupplier();
         startProduct();
@@ -115,6 +118,7 @@ public class MainController implements ActionListener {
         customer = new Customer();
         customerImpl = new CustomerDAOImpl();
         systemPrincipal.btnGuardarClientes.addActionListener(this);
+        systemPrincipal.btnBuscarClientes.addActionListener(this);
         systemPrincipal.btnActualizarClientes.addActionListener(this);
         systemPrincipal.btnEliminarClientes.addActionListener(this);
         systemPrincipal.btnLimpiarFieldsClientes.addActionListener(this);
@@ -133,6 +137,7 @@ public class MainController implements ActionListener {
         supplier = new Supplier();
         supplierImpl = new SupplierDAOImpl();
         systemPrincipal.btnGuardarProveedor.addActionListener(this);
+        systemPrincipal.btnBuscarProveedor.addActionListener(this);
         systemPrincipal.btnActualizarProveedor.addActionListener(this);
         systemPrincipal.btnEliminarProveedor.addActionListener(this);
         systemPrincipal.btnLimpiarFieldsProveedor.addActionListener(this);
@@ -151,6 +156,7 @@ public class MainController implements ActionListener {
         productImpl = new ProductDAOImpl();
         updateComoBoxSupplierOfProduct();
         systemPrincipal.btnGuardarProductos.addActionListener(this);
+        systemPrincipal.btnBuscarProductos.addActionListener(this);
         systemPrincipal.btnActualizarProductos.addActionListener(this);
         systemPrincipal.btnEliminarProductos.addActionListener(this);
         systemPrincipal.btnLimpiarFieldsProductos.addActionListener(this);
@@ -185,8 +191,8 @@ public class MainController implements ActionListener {
         tableModelCustomer.addColumn("Teléfono");
         tableModelCustomer.addColumn("Dirección");
         tableModelCustomer.addColumn("Razón social");
-        int width[] = {75,150,180,75,120,90};
-        for (int i = 0 ; i < 6 ; i++) {
+        int width[] = {75, 150, 180, 75, 120, 90};
+        for (int i = 0; i < 6; i++) {
             systemPrincipal.tableClientes.getColumnModel().getColumn(i).setPreferredWidth(width[i]);
         }
         addListTableModelCustomer(); // Asignar las filas según los datos traidos de la base de datos
@@ -203,8 +209,8 @@ public class MainController implements ActionListener {
         tableModelSupplier.addColumn("Teléfono");
         tableModelSupplier.addColumn("Dirección");
         tableModelSupplier.addColumn("Razón social");
-        int width[] = {75,150,180,75,120,90};
-        for (int i = 0 ; i < 6 ; i++) {
+        int width[] = {75, 150, 180, 75, 120, 90};
+        for (int i = 0; i < 6; i++) {
             systemPrincipal.tableProveedor.getColumnModel().getColumn(i).setPreferredWidth(width[i]);
         }
         addListTableModelSupplier();
@@ -220,8 +226,8 @@ public class MainController implements ActionListener {
         tableModelProduct.addColumn("Proveedor");
         tableModelProduct.addColumn("Cantidad");
         tableModelProduct.addColumn("Precio");
-        int width[] = {50,190,190,50,50};
-        for (int i = 0 ; i < 5 ; i++) {
+        int width[] = {50, 190, 190, 50, 50};
+        for (int i = 0; i < 5; i++) {
             systemPrincipal.tableProductos.getColumnModel().getColumn(i).setPreferredWidth(width[i]);
         }
         addListTableModelProduct();
@@ -425,6 +431,37 @@ public class MainController implements ActionListener {
                     JOptionPane.showMessageDialog(null, "Ingrese un N° identificación numérico");
             }
         }
+        if (e.getSource() == systemPrincipal.btnBuscarClientes) {
+            identificationCustomer = systemPrincipal.fieldBuscarClientes.getText().trim();
+            if (!identificationCustomer.equals("")) {
+                customer.setIdentification(identificationCustomer);
+                switch (customerImpl.findById(customer)) {
+                    case 1 -> {
+                        tableModelCustomer.setRowCount(0);
+                        nameCustomer = customer.getName();
+                        emailCustomer = customer.getEmail();
+                        phoneNumberCustomer = customer.getPhoneNumber();
+                        addressCustomer = customer.getAddress();
+                        razonSocialCustomer = customer.getRazonSocial();
+                        Object[] row = {identificationCustomer, nameCustomer, emailCustomer, phoneNumberCustomer, addressCustomer, razonSocialCustomer};
+                        tableModelCustomer.addRow(row);
+                    }
+                    case 2 -> {
+                        JOptionPane.showMessageDialog(null, "N° identificación no registrado");
+                        addListTableModelCustomer();
+                    }
+                    case 0 -> {
+                        JOptionPane.showMessageDialog(null, "Problemas en la conexión");
+                        addListTableModelCustomer();
+                    }
+                }
+                systemPrincipal.fieldBuscarClientes.setText("");
+                toCleanCustomer();
+            } else {
+                toCleanCustomer();
+                addListTableModelCustomer();
+            }
+        }
         if (e.getSource() == systemPrincipal.btnActualizarClientes) {
             if (customer.getIdCustomer() != 0) { // Confirma que primero haya sido seleccionado un registro
                 switch (validationEnteredDataCustomer()) {
@@ -515,6 +552,37 @@ public class MainController implements ActionListener {
                     JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
                 case 0 ->
                     JOptionPane.showMessageDialog(null, "Ingrese un RUT numérico");
+            }
+        }
+        if (e.getSource() == systemPrincipal.btnBuscarProveedor) {
+            rutSupplier = systemPrincipal.fieldBuscarProveedor.getText().trim();
+            if (!rutSupplier.equals("")) {
+                supplier.setRut(rutSupplier);
+                switch (supplierImpl.findById(supplier)) {
+                    case 1 -> {
+                        tableModelSupplier.setRowCount(0);
+                        nameSupplier = supplier.getName();
+                        emailSupplier = supplier.getEmail();
+                        phoneNumberSupplier = supplier.getPhoneNumber();
+                        addressSupplier = supplier.getAddress();
+                        razonSocialSupplier = supplier.getRazonSocial();
+                        Object[] row = {rutSupplier, nameSupplier, emailSupplier, phoneNumberSupplier, addressSupplier, razonSocialSupplier};
+                        tableModelSupplier.addRow(row);
+                    }
+                    case 2 -> {
+                        JOptionPane.showMessageDialog(null, "RUT no registrado");
+                        addListTableModelSupplier();
+                    }
+                    case 0 -> {
+                        JOptionPane.showMessageDialog(null, "Problemas en la conexión");
+                        addListTableModelSupplier();
+                    }
+                }
+                systemPrincipal.fieldBuscarClientes.setText("");
+                toCleanSupplier();
+            } else {
+                toCleanCustomer();
+                addListTableModelSupplier();
             }
         }
         if (e.getSource() == systemPrincipal.btnActualizarProveedor) {
@@ -610,6 +678,36 @@ public class MainController implements ActionListener {
                     JOptionPane.showMessageDialog(null, "Precio o Cantidad invalidos, ingrese valores numéricos");
                 case 0 ->
                     JOptionPane.showMessageDialog(null, "Código invalido, ingrese valores numéricos");
+            }
+        }
+        if (e.getSource() == systemPrincipal.btnBuscarProductos) {
+            codeProduct = systemPrincipal.fieldBuscarProductos.getText().trim();
+            if (!codeProduct.equals("")) {
+                product.setCode(codeProduct);
+                switch (productImpl.findById(product)) {
+                    case 1 -> {
+                        tableModelProduct.setRowCount(0);
+                        nameProduct = product.getName();
+                        countProduct = product.getCount();
+                        priceProduct = product.getPrice();
+                        supplierProduct = product.getSupplier();
+                        Object[] row = {codeProduct, nameProduct, countProduct, priceProduct, supplierProduct};
+                        tableModelProduct.addRow(row);
+                    }
+                    case 2 -> {
+                        JOptionPane.showMessageDialog(null, "Código no registrado");
+                        addListTableModelProduct();
+                    }
+                    case 0 -> {
+                        JOptionPane.showMessageDialog(null, "Problemas en la conexión");
+                        addListTableModelProduct();
+                    }
+                }
+                systemPrincipal.fieldBuscarClientes.setText("");
+                toCleanProduct();
+            } else {
+                toCleanProduct();
+                addListTableModelProduct();
             }
         }
         if (e.getSource() == systemPrincipal.btnActualizarProductos) {
