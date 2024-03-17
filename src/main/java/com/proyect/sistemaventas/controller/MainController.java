@@ -160,6 +160,7 @@ public class MainController implements ActionListener {
         systemPrincipal.btnActualizarProductos.addActionListener(this);
         systemPrincipal.btnEliminarProductos.addActionListener(this);
         systemPrincipal.btnLimpiarFieldsProductos.addActionListener(this);
+        systemPrincipal.btnExcelProductos.addActionListener(this);
         systemPrincipal.tableProductos.setModel(tableModelProduct);
         loadModelProduct();
         systemPrincipal.tableProductos.addMouseListener(adapterProduct);
@@ -764,6 +765,10 @@ public class MainController implements ActionListener {
         if (e.getSource() == systemPrincipal.btnLimpiarFieldsProductos) {
             toCleanProduct();
             addListTableModelProduct();
+        }
+        if (e.getSource() == systemPrincipal.btnExcelProductos) {
+            ExcelReport export = new ExcelReport();
+            export.report();
         }
     }
 
