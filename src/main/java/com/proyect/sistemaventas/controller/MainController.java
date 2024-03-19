@@ -12,6 +12,8 @@ import com.proyect.sistemaventas.view.LoginView;
 import com.proyect.sistemaventas.view.SystemPrincipalView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -108,6 +110,7 @@ public class MainController implements ActionListener {
         startCustomer();
         startSupplier();
         startProduct();
+        startNewSale();
     }
 
     /**
@@ -165,6 +168,16 @@ public class MainController implements ActionListener {
         loadModelProduct();
         systemPrincipal.tableProductos.addMouseListener(adapterProduct);
         systemPrincipal.tableProductos.setEnabled(false);
+    }
+
+    /**
+     * No es necesario inicializar ya que se optionen la información de product
+     */
+    private void startNewSale() {
+        systemPrincipal.fieldCodigoNV.addKeyListener(adapterSalesCode);
+        systemPrincipal.fieldProductoNV.setEditable(false);
+        systemPrincipal.fieldStockNV.setEditable(false);
+        systemPrincipal.fieldPrecioNV.setEditable(false);
     }
 
     /**
@@ -375,6 +388,46 @@ public class MainController implements ActionListener {
                         JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                 }
                 addListTableModelProduct(); // Actualizar por si por ejemplo se presenta un case 2 CDU: se elimina en la base de datos, por ende en la aplicación aun sigue existiendo si no se actualiza
+            }
+        }
+    };
+
+    /**
+     * Permite generar una acción al dar Click en un elemento
+     */
+    KeyAdapter adapterSalesCode = new KeyAdapter() {
+        @Override
+        public void keyPressed(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) { // Si se genera un enter
+                if (e.getSource() == systemPrincipal.fieldCodigoNV) { // Si se genera la acción en determinado elemento
+                    codeProduct = systemPrincipal.fieldCodigoNV.getText().trim();
+                    if (!codeProduct.equals("")) { // Verificar si está vacio al dar enter
+                        product.setCode(codeProduct);
+                        if (isNumeric(codeProduct)) { // Verificar que sean números el valor ingresado
+                            switch (productImpl.findById(product)) {
+                                case 1 -> {
+                                    systemPrincipal.fieldProductoNV.setText(product.getName());
+                                    systemPrincipal.fieldPrecioNV.setText(String.valueOf(product.getPrice()));
+                                    systemPrincipal.fieldStockNV.setText(String.valueOf(product.getCount()));
+                                }
+                                case 2 -> {
+                                    JOptionPane.showMessageDialog(null, "Código de producto no registrado");
+                                    toCleanNewSale();
+                                }
+                                case 0 -> {
+                                    JOptionPane.showMessageDialog(null, "Problemas en la conexión");
+                                    toCleanNewSale();
+                                }
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Ingrese el código de producto correctamente");
+                            toCleanNewSale();
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Ingrese un código de producto");
+                        toCleanNewSale();
+                    }
+                }
             }
         }
     };
@@ -817,6 +870,14 @@ public class MainController implements ActionListener {
         // Quitar el valor de Código y idProduct para que no pueda eliminar ni actualizar 
         product.setIdProduct(0);
         product.setCode(null);
+    }
+
+    private void toCleanNewSale() {
+        systemPrincipal.fieldCodigoNV.setText("");
+        systemPrincipal.fieldProductoNV.setText("");
+        systemPrincipal.fieldCantidadNV.setText("");
+        systemPrincipal.fieldPrecioNV.setText("");
+        systemPrincipal.fieldStockNV.setText("");
     }
 
     /**
