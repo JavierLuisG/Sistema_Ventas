@@ -72,6 +72,12 @@ public class MainController implements ActionListener {
     private final DefaultTableModel tableModelProduct = new DefaultTableModel();
     private List<Product> listProduct;
 
+    /* Variables de New Sales -> Este no tiene un modelo */
+    private boolean codeSelect = false; // Para verificar que primero haya sido ingresado un codigo, es decir, un producto
+    private int countNewSales; // La cantidad de productos que quiere comprar el usuario
+    private int totalByProduct; // Total a pagar en relación al producto, es decir, en la fila generada
+    private final DefaultTableModel tableModelNewSales = new DefaultTableModel();
+
     /**
      * Constructor del MainController
      *
@@ -171,13 +177,16 @@ public class MainController implements ActionListener {
     }
 
     /**
-     * No es necesario inicializar ya que se optionen la información de product
+     * No es necesario inicializar ya que se optione la información de product
      */
     private void startNewSale() {
         systemPrincipal.fieldCodigoNV.addKeyListener(adapterSalesCode);
+        systemPrincipal.fieldCantidadNV.addKeyListener(adapterSalesCode);
         systemPrincipal.fieldProductoNV.setEditable(false);
         systemPrincipal.fieldStockNV.setEditable(false);
         systemPrincipal.fieldPrecioNV.setEditable(false);
+        systemPrincipal.tableNV.setModel(tableModelNewSales);
+        loadModelNewSales();
     }
 
     /**
@@ -245,6 +254,22 @@ public class MainController implements ActionListener {
             systemPrincipal.tableProductos.getColumnModel().getColumn(i).setPreferredWidth(width[i]);
         }
         addListTableModelProduct();
+    }
+
+    /**
+     * Permite establecer las columnas con su respectivo nombre para NewSales o
+     * tabla nuevas ventas
+     */
+    private void loadModelNewSales() {
+        tableModelNewSales.addColumn("Código");
+        tableModelNewSales.addColumn("Producto");
+        tableModelNewSales.addColumn("Cantidad");
+        tableModelNewSales.addColumn("Precio p/u");
+        tableModelNewSales.addColumn("Total");
+        int width[] = {80, 210, 80, 80, 80};
+        for (int i = 0; i < 5; i++) {
+            systemPrincipal.tableNV.getColumnModel().getColumn(i).setPreferredWidth(width[i]);
+        }
     }
 
     /**
@@ -406,9 +431,13 @@ public class MainController implements ActionListener {
                         if (isNumeric(codeProduct)) { // Verificar que sean números el valor ingresado
                             switch (productImpl.findById(product)) {
                                 case 1 -> {
-                                    systemPrincipal.fieldProductoNV.setText(product.getName());
-                                    systemPrincipal.fieldPrecioNV.setText(String.valueOf(product.getPrice()));
-                                    systemPrincipal.fieldStockNV.setText(String.valueOf(product.getCount()));
+                                    nameProduct = product.getName();
+                                    priceProduct = product.getPrice();
+                                    countProduct = product.getCount();
+                                    systemPrincipal.fieldProductoNV.setText(nameProduct);
+                                    systemPrincipal.fieldPrecioNV.setText(String.valueOf(priceProduct));
+                                    systemPrincipal.fieldStockNV.setText(String.valueOf(countProduct));
+                                    codeSelect = true;
                                 }
                                 case 2 -> {
                                     JOptionPane.showMessageDialog(null, "Código de producto no registrado");
@@ -426,6 +455,32 @@ public class MainController implements ActionListener {
                     } else {
                         JOptionPane.showMessageDialog(null, "Ingrese un código de producto");
                         toCleanNewSale();
+                    }
+                }
+                if (e.getSource() == systemPrincipal.fieldCantidadNV) {
+                    String valueText = systemPrincipal.fieldCantidadNV.getText().trim();
+                    if (codeSelect) { // Verificar que haya sido seleccionado primero el código
+                        if (!valueText.equals("")) { // Verificar que tenga un valor el campo
+                            if (isNumeric(valueText)) { // verificar que sean números los valores ingresados 
+                                countNewSales = Integer.parseInt(systemPrincipal.fieldCantidadNV.getText().trim()); // Convertir en número el valor ingresado por el usuario
+                                if (countNewSales <= countProduct) { // Verificar que no sea mayor el número que desee comprar al que se tiene en stock
+                                    totalByProduct = countNewSales * priceProduct; // Obtener el total a pagar por el producto seleccionado
+                                    Object[] row = {codeProduct, nameProduct, countNewSales, priceProduct, totalByProduct};
+                                    tableModelNewSales.addRow(row); // Agregar la fila generada según el producto elegido
+                                    toCleanNewSale(); // Cuando se genere el item de venta se limpian los campos
+                                } else {
+                                    JOptionPane.showMessageDialog(null, "Stock no disponible");
+                                }
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Ingrese un valor correcto");
+                                systemPrincipal.fieldCantidadNV.setText("");
+                                systemPrincipal.fieldTotalPagarNV.setText("");
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Ingrese la cantidad que desea comprar");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Ingrese primero el código de un producto");
                     }
                 }
             }
@@ -878,6 +933,7 @@ public class MainController implements ActionListener {
         systemPrincipal.fieldCantidadNV.setText("");
         systemPrincipal.fieldPrecioNV.setText("");
         systemPrincipal.fieldStockNV.setText("");
+        codeSelect = false; // Con false ya no hay código seleccionado, debe nuevamente escoger un producto el usuario
     }
 
     /**
