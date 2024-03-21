@@ -76,6 +76,8 @@ public class MainController implements ActionListener {
     private boolean codeSelect = false; // Para verificar que primero haya sido ingresado un codigo, es decir, un producto
     private int countNewSales; // La cantidad de productos que quiere comprar el usuario
     private int totalByProduct; // Total a pagar en relación al producto, es decir, en la fila generada
+    private String valueCountNV; // Valor obtenido de la fieldCantidadNV
+    private String newValueCountNV; // Valor obtenido de la nueva cantidad que va a ingresar el usuario por el showMessageDialog
     private final DefaultTableModel tableModelNewSales = new DefaultTableModel();
 
     /**
@@ -429,23 +431,82 @@ public class MainController implements ActionListener {
                     if (!codeProduct.equals("")) { // Verificar si está vacio al dar enter
                         product.setCode(codeProduct);
                         if (isNumeric(codeProduct)) { // Verificar que sean números el valor ingresado
-                            switch (productImpl.findById(product)) {
-                                case 1 -> {
-                                    nameProduct = product.getName();
-                                    priceProduct = product.getPrice();
-                                    countProduct = product.getCount();
-                                    systemPrincipal.fieldProductoNV.setText(nameProduct);
-                                    systemPrincipal.fieldPrecioNV.setText(String.valueOf(priceProduct));
-                                    systemPrincipal.fieldStockNV.setText(String.valueOf(countProduct));
+                            /*
+                            Para recorrer el for que está en el else es necesario que ya tenga un valor, de lo contrario no lo recorre, 
+                            por ello se crea el if - else donde el if se ejecuta si no hay valores para recorrer con el for 
+                            (no hay valores en la tabla) y ya luego de agregar su primer valor se ejecuta el else 
+                             */
+                            if (systemPrincipal.tableNV.getRowCount() == 0) {
+                                switch (productImpl.findById(product)) {
+                                    case 1 -> {
+                                        nameProduct = product.getName();
+                                        priceProduct = product.getPrice();
+                                        countProduct = product.getCount();
+                                        systemPrincipal.fieldProductoNV.setText(nameProduct);
+                                        systemPrincipal.fieldPrecioNV.setText(String.valueOf(priceProduct));
+                                        systemPrincipal.fieldStockNV.setText(String.valueOf(countProduct));
+                                        codeSelect = true;
+                                    }
+                                    case 2 -> {
+                                        JOptionPane.showMessageDialog(null, "Código de producto no registrado");
+                                        toCleanNewSale();
+                                    }
+                                    case 0 -> {
+                                        JOptionPane.showMessageDialog(null, "Problemas en la conexión");
+                                        toCleanNewSale();
+                                    }
+                                }
+                            } else {
+                                /*
+                                Este for permite saber si ya ha sido agregado el producto en la tableNV 
+                                */
+                                for (int i = 0; i < systemPrincipal.tableNV.getRowCount(); i++) {
                                     codeSelect = true;
-                                }
-                                case 2 -> {
-                                    JOptionPane.showMessageDialog(null, "Código de producto no registrado");
-                                    toCleanNewSale();
-                                }
-                                case 0 -> {
-                                    JOptionPane.showMessageDialog(null, "Problemas en la conexión");
-                                    toCleanNewSale();
+                                    // si no ha sido agregado se muestran los datos en la caja para generar la seleccion del producto a comprar
+                                    if (!systemPrincipal.tableNV.getValueAt(i, 0).equals(systemPrincipal.fieldCodigoNV.getText().trim())) {
+                                        switch (productImpl.findById(product)) {
+                                            case 1 -> {
+                                                nameProduct = product.getName();
+                                                priceProduct = product.getPrice();
+                                                countProduct = product.getCount();
+                                                systemPrincipal.fieldProductoNV.setText(nameProduct);
+                                                systemPrincipal.fieldPrecioNV.setText(String.valueOf(priceProduct));
+                                                systemPrincipal.fieldStockNV.setText(String.valueOf(countProduct));
+                                            }
+                                            case 2 -> {
+                                                JOptionPane.showMessageDialog(null, "Código de producto no registrado");
+                                                toCleanNewSale();
+                                            }
+                                            case 0 -> {
+                                                JOptionPane.showMessageDialog(null, "Problemas en la conexión");
+                                                toCleanNewSale();
+                                            }
+                                        }
+                                    } else { // Si ya fue agregado se muestra una ventana para generar la nueva cantidad 
+                                        do {
+                                            newValueCountNV = JOptionPane.showInputDialog("Ingrese nuevamente la cantidad que solicita del producto\n" + nameProduct + " con código " + codeProduct + ":");
+                                            if (newValueCountNV != null) {
+                                                switch (validationIndicateCountProductNV(newValueCountNV, countProduct)) {
+                                                    case 1 -> {
+                                                        tableModelNewSales.setValueAt(countNewSales, i, 2);
+                                                        tableModelNewSales.setValueAt(totalByProduct, i, 4);
+                                                    }
+                                                    case 2 ->
+                                                        JOptionPane.showMessageDialog(null, "Stock no disponible");
+                                                    case 3 -> {
+                                                        JOptionPane.showMessageDialog(null, "Ingrese un valor correcto");
+                                                        systemPrincipal.fieldCantidadNV.setText("");
+                                                        systemPrincipal.fieldTotalPagarNV.setText("");
+                                                    }
+                                                    case 4 ->
+                                                        JOptionPane.showMessageDialog(null, "Ingrese la cantidad que desea comprar");
+                                                }
+                                            } else {
+                                                break;
+                                            }
+                                        } while (validationIndicateCountProductNV(newValueCountNV, countProduct) != 1);
+                                        toCleanNewSale();
+                                    }
                                 }
                             }
                         } else {
@@ -458,29 +519,28 @@ public class MainController implements ActionListener {
                     }
                 }
                 if (e.getSource() == systemPrincipal.fieldCantidadNV) {
-                    String valueText = systemPrincipal.fieldCantidadNV.getText().trim();
-                    if (codeSelect) { // Verificar que haya sido seleccionado primero el código
-                        if (!valueText.equals("")) { // Verificar que tenga un valor el campo
-                            if (isNumeric(valueText)) { // verificar que sean números los valores ingresados 
-                                countNewSales = Integer.parseInt(systemPrincipal.fieldCantidadNV.getText().trim()); // Convertir en número el valor ingresado por el usuario
-                                if (countNewSales <= countProduct) { // Verificar que no sea mayor el número que desee comprar al que se tiene en stock
-                                    totalByProduct = countNewSales * priceProduct; // Obtener el total a pagar por el producto seleccionado
-                                    Object[] row = {codeProduct, nameProduct, countNewSales, priceProduct, totalByProduct};
-                                    tableModelNewSales.addRow(row); // Agregar la fila generada según el producto elegido
-                                    toCleanNewSale(); // Cuando se genere el item de venta se limpian los campos
-                                } else {
-                                    JOptionPane.showMessageDialog(null, "Stock no disponible");
-                                }
-                            } else {
-                                JOptionPane.showMessageDialog(null, "Ingrese un valor correcto");
-                                systemPrincipal.fieldCantidadNV.setText("");
-                                systemPrincipal.fieldTotalPagarNV.setText("");
+                    valueCountNV = systemPrincipal.fieldCantidadNV.getText().trim();
+                    switch (validationIndicateCountProductNV(valueCountNV, countProduct)) {
+                        case 1 -> {
+                            if (countNewSales <= countProduct) { // Verificar que no sea mayor el número que desee comprar al que se tiene en stock
+                                totalByProduct = countNewSales * priceProduct; // Obtener el total a pagar por el producto seleccionado
+                                Object[] row = {codeProduct, nameProduct, countNewSales, priceProduct, totalByProduct};
+                                tableModelNewSales.addRow(row); // Agregar la fila generada según el producto elegido
+                                toCleanNewSale(); // Cuando se genere el item de venta se limpian los campos
                             }
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Ingrese la cantidad que desea comprar");
                         }
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Ingrese primero el código de un producto");
+                        case 2 ->
+                            JOptionPane.showMessageDialog(null, "Stock no disponible");
+                        case 3 -> {
+                            JOptionPane.showMessageDialog(null, "Ingrese un valor correcto");
+                            systemPrincipal.fieldCantidadNV.setText("");
+                        }
+                        case 4 -> {
+                            JOptionPane.showMessageDialog(null, "Ingrese la cantidad que desea comprar");
+                            systemPrincipal.fieldCantidadNV.setText("");
+                        }
+                        case 5 ->
+                            JOptionPane.showMessageDialog(null, "Ingrese primero el código de un producto");
                     }
                 }
             }
@@ -1042,4 +1102,44 @@ public class MainController implements ActionListener {
             return 0; // Retorna 0 si no ingresó números en el Código
         }
     }
+    
+    /**
+     * Permite realizar validaciones que van especificas al ingreso de la
+     * cantidad en tanto en el fielCantidadNV como en el showMessageDialog
+     *
+     * @param value de donde se obtiene el valor ingresado por el usuario
+     * @param countProduct cantidad de stock o unidades disponibles guardado en
+     * la base de datos
+     * @return un int que indica lo que se ha realizado
+     */
+    public int validationIndicateCountProductNV(String value, int countProduct) {
+        if (codeSelect) { // Verificar que haya sido seleccionado primero el código
+            if (value != null) {
+                if (!value.equals("")) { // Verificar que tenga un valor el campo
+                    if (isNumeric(value)) { // verificar que sean números los valores ingresados                     
+                        countNewSales = Integer.parseInt(value); // Convertir en número el valor ingresado por el usuario
+                        if (countNewSales > 0) {
+                            if (countNewSales <= countProduct) { // Verificar que no sea mayor el número que desee comprar al que se tiene en stock
+                                totalByProduct = countNewSales * priceProduct; // Obtener el total a pagar por el producto seleccionado
+                                return 1;
+                            } else {
+                                return 2;
+                            }
+                        } else {
+                            return 4;
+                        }
+                    } else {
+                        return 3;
+                    }
+                } else {
+                    return 4;
+                }
+            } else {
+                return 4;
+            }
+        } else {
+            return 5;
+        }
+    }
+
 }
