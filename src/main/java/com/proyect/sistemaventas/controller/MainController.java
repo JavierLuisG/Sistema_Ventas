@@ -73,12 +73,13 @@ public class MainController implements ActionListener {
     private List<Product> listProduct;
 
     /* Variables de New Sales -> Este no tiene un modelo */
-    private boolean codeSelect = false; // Para verificar que primero haya sido ingresado un codigo, es decir, un producto
-    private int countNewSales; // La cantidad de productos que quiere comprar el usuario
-    private int totalByProduct; // Total a pagar en relación al producto, es decir, en la fila generada
+    private boolean codeSelectNV = false; // Para verificar que primero haya sido ingresado un codigo, es decir, un producto
+    private int countNewSalesNV; // La cantidad de productos que quiere comprar el usuario
+    private int totalByProductNV; // Total a pagar en relación al producto, es decir, en la fila generada
     private String valueCountNV; // Valor obtenido de la fieldCantidadNV
     private String newValueCountNV; // Valor obtenido de la nueva cantidad que va a ingresar el usuario por el showMessageDialog
-    private int itemPosition; // Permite saber en que posición se encuentra el producto en tableNV
+    private int itemPositionNV; // Permite saber en que posición se encuentra el producto en tableNV
+    private int itemSelectNV; // Fila seleccionada de la tableNV
     private final DefaultTableModel tableModelNewSales = new DefaultTableModel();
 
     /**
@@ -189,7 +190,10 @@ public class MainController implements ActionListener {
         systemPrincipal.fieldStockNV.setEditable(false);
         systemPrincipal.fieldPrecioNV.setEditable(false);
         systemPrincipal.tableNV.setModel(tableModelNewSales);
+        systemPrincipal.btnEliminarNV.addActionListener(this);
         loadModelNewSales();
+        systemPrincipal.tableNV.addMouseListener(adapterNewSales);
+        systemPrincipal.tableNV.setEnabled(false);
     }
 
     /**
@@ -421,6 +425,20 @@ public class MainController implements ActionListener {
     };
 
     /**
+     * Permite seleccionar la fila de la tabla NUEVA VENTA y generar el evento.
+     * En este evento se realiza para seleccionar el item que será sacado de la 
+     * tabla
+     */
+    MouseAdapter adapterNewSales = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (systemPrincipal.tableNV.rowAtPoint(e.getPoint()) != -1) {
+                itemSelectNV = systemPrincipal.tableNV.rowAtPoint(e.getPoint());
+            }
+        }
+    };
+
+    /**
      * Permite generar una acción al dar Click en un elemento
      */
     KeyAdapter adapterSalesCode = new KeyAdapter() {
@@ -445,7 +463,7 @@ public class MainController implements ActionListener {
                                         systemPrincipal.fieldProductoNV.setText(nameProduct);
                                         systemPrincipal.fieldPrecioNV.setText(String.valueOf(priceProduct));
                                         systemPrincipal.fieldStockNV.setText(String.valueOf(countProduct));
-                                        codeSelect = true;
+                                        codeSelectNV = true;
                                     }
                                     case 2 -> {
                                         JOptionPane.showMessageDialog(null, "Código de producto no registrado");
@@ -457,17 +475,17 @@ public class MainController implements ActionListener {
                                     }
                                 }
                             } else {
-                                codeSelect = true; // se pone aquí por el toCleanNewSale() que lo vuelve false                                    
+                                codeSelectNV = true; // se pone aquí por el toCleanNewSale() que lo vuelve false                                    
                                 if (isLocationInTableNV()) {// Si ya fue agregado se muestra una ventana para generar la nueva cantidad 
                                     do { // Permite no cerrar el inputDialog en caso, por ejemplo, de que ingrese un dato no valido
-                                        int countProductSelect = Integer.parseInt(systemPrincipal.tableNV.getValueAt(itemPosition, 2).toString());
+                                        int countProductSelect = Integer.parseInt(systemPrincipal.tableNV.getValueAt(itemPositionNV, 2).toString());
                                         newValueCountNV = JOptionPane.showInputDialog("Tiene " + countProductSelect + " unidades seleccionadas del producto " + nameProduct + "\nCuántas desea llevar en total?");
                                         if (newValueCountNV != null) {
-                                            priceProduct = Integer.parseInt(systemPrincipal.tableNV.getValueAt(itemPosition, 3).toString()); // Actualizar precio del producto, si entra en este if trae el price del último lugar donde se realizó consulta a la base de datos
+                                            priceProduct = Integer.parseInt(systemPrincipal.tableNV.getValueAt(itemPositionNV, 3).toString()); // Actualizar precio del producto, si entra en este if trae el price del último lugar donde se realizó consulta a la base de datos
                                             switch (validationIndicateCountProductNV(newValueCountNV, countProduct)) {
                                                 case 1 -> {
-                                                    tableModelNewSales.setValueAt(countNewSales, itemPosition, 2);
-                                                    tableModelNewSales.setValueAt(totalByProduct, itemPosition, 4);
+                                                    tableModelNewSales.setValueAt(countNewSalesNV, itemPositionNV, 2);
+                                                    tableModelNewSales.setValueAt(totalByProductNV, itemPositionNV, 4);
                                                 }
                                                 case 2 ->
                                                     JOptionPane.showMessageDialog(null, "Stock no disponible");
@@ -520,8 +538,8 @@ public class MainController implements ActionListener {
                     valueCountNV = systemPrincipal.fieldCantidadNV.getText().trim();
                     switch (validationIndicateCountProductNV(valueCountNV, countProduct)) {
                         case 1 -> {
-                            if (countNewSales <= countProduct) { // Verificar que no sea mayor el número que desee comprar al que se tiene en stock
-                                Object[] row = {codeProduct, nameProduct, countNewSales, priceProduct, totalByProduct};
+                            if (countNewSalesNV <= countProduct) { // Verificar que no sea mayor el número que desee comprar al que se tiene en stock
+                                Object[] row = {codeProduct, nameProduct, countNewSalesNV, priceProduct, totalByProductNV};
                                 tableModelNewSales.addRow(row); // Agregar la fila generada según el producto elegido
                                 toCleanNewSale(); // Cuando se genere el item de venta se limpian los campos
                                 systemPrincipal.fieldTotalPagarNV.setText(String.valueOf(totalToPay())); // Mostrar total a pagar actualizado de las venta en general
@@ -564,6 +582,15 @@ public class MainController implements ActionListener {
                 }
                 case 0 ->
                     JOptionPane.showMessageDialog(null, "Email o contraseña incorrectos");
+            }
+        }
+        /**
+         * ActionEnvent de SYSTEMPRINCIPAL - New Sales
+         */
+        if (e.getSource() == systemPrincipal.btnEliminarNV) {
+            if (JOptionPane.showConfirmDialog(null, "¿Seguro de sacar el producto " + tableModelNewSales.getValueAt(itemSelectNV, 1) + " de la lista?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                tableModelNewSales.removeRow(itemSelectNV);
+                systemPrincipal.fieldTotalPagarNV.setText(String.valueOf(totalToPay()));
             }
         }
         /**
@@ -991,7 +1018,7 @@ public class MainController implements ActionListener {
         systemPrincipal.fieldCantidadNV.setText("");
         systemPrincipal.fieldPrecioNV.setText("");
         systemPrincipal.fieldStockNV.setText("");
-        codeSelect = false; // Con false ya no hay código seleccionado, debe nuevamente escoger un producto el usuario
+        codeSelectNV = false; // Con false ya no hay código seleccionado, debe nuevamente escoger un producto el usuario
     }
 
     /**
@@ -1111,14 +1138,14 @@ public class MainController implements ActionListener {
      * @return un int que indica lo que se ha realizado
      */
     public int validationIndicateCountProductNV(String value, int countProduct) {
-        if (codeSelect) { // Verificar que haya sido seleccionado primero el código
+        if (codeSelectNV) { // Verificar que haya sido seleccionado primero el código
             if (value != null) {
                 if (!value.equals("")) { // Verificar que tenga un valor el campo
                     if (isNumeric(value)) { // verificar que sean números los valores ingresados                     
-                        countNewSales = Integer.parseInt(value); // Convertir en número el valor ingresado por el usuario
-                        if (countNewSales > 0) {
-                            if (countNewSales <= countProduct) { // Verificar que no sea mayor el número que desee comprar al que se tiene en stock
-                                totalByProduct = countNewSales * priceProduct; // Obtener el total a pagar por el producto seleccionado
+                        countNewSalesNV = Integer.parseInt(value); // Convertir en número el valor ingresado por el usuario
+                        if (countNewSalesNV > 0) {
+                            if (countNewSalesNV <= countProduct) { // Verificar que no sea mayor el número que desee comprar al que se tiene en stock
+                                totalByProductNV = countNewSalesNV * priceProduct; // Obtener el total a pagar por el producto seleccionado
                                 return 1;
                             } else {
                                 return 2;
@@ -1151,7 +1178,7 @@ public class MainController implements ActionListener {
         for (int i = 0; i < systemPrincipal.tableNV.getRowCount(); i++) {
             if (systemPrincipal.tableNV.getValueAt(i, 0).equals(systemPrincipal.fieldCodigoNV.getText().trim())) {
                 isLocated = true;
-                itemPosition = i;
+                itemPositionNV = i;
                 break;
             }
         }
