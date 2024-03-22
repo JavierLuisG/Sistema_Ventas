@@ -459,10 +459,11 @@ public class MainController implements ActionListener {
                             } else {
                                 codeSelect = true; // se pone aquí por el toCleanNewSale() que lo vuelve false                                    
                                 if (isLocationInTableNV()) {// Si ya fue agregado se muestra una ventana para generar la nueva cantidad 
-                                    do {
+                                    do { // Permite no cerrar el inputDialog en caso, por ejemplo, de que ingrese un dato no valido
                                         int countProductSelect = Integer.parseInt(systemPrincipal.tableNV.getValueAt(itemPosition, 2).toString());
                                         newValueCountNV = JOptionPane.showInputDialog("Tiene " + countProductSelect + " unidades seleccionadas del producto " + nameProduct + "\nCuántas desea llevar en total?");
                                         if (newValueCountNV != null) {
+                                            priceProduct = Integer.parseInt(systemPrincipal.tableNV.getValueAt(itemPosition, 3).toString()); // Actualizar precio del producto, si entra en este if trae el price del último lugar donde se realizó consulta a la base de datos
                                             switch (validationIndicateCountProductNV(newValueCountNV, countProduct)) {
                                                 case 1 -> {
                                                     tableModelNewSales.setValueAt(countNewSales, itemPosition, 2);
