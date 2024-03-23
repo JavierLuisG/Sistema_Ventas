@@ -49,6 +49,7 @@ public class MainController implements ActionListener {
     private String emailCustomer;
     private String addressCustomer;
     private String razonSocialCustomer;
+    private boolean isSelectItemCustomer = false; // Verifica que haya sido seleccionado un item de la tabla
     private final DefaultTableModel tableModelCustomer = new DefaultTableModel();
     private List<Customer> listCustomer;
 
@@ -59,6 +60,7 @@ public class MainController implements ActionListener {
     private String emailSupplier;
     private String addressSupplier;
     private String razonSocialSupplier;
+    private boolean isSelectItemSupplier = false; // Verifica que haya sido seleccionado un item de la tabla
     private final DefaultTableModel tableModelSupplier = new DefaultTableModel();
     private List<Supplier> listSupplier; // La puse global para poder agregar los nombres al comboBox de productos
 
@@ -69,6 +71,7 @@ public class MainController implements ActionListener {
     private int priceProduct;
     private String supplierProduct;
     private final String firstItemComboBox = "Seleccionar";
+    private boolean isSelectItemProduct = false; // Verifica que haya sido seleccionado un item de la tabla
     private final DefaultTableModel tableModelProduct = new DefaultTableModel();
     private List<Product> listProduct;
 
@@ -80,6 +83,7 @@ public class MainController implements ActionListener {
     private String newValueCountNV; // Valor obtenido de la nueva cantidad que va a ingresar el usuario por el showMessageDialog
     private int itemPositionNV; // Permite saber en que posición se encuentra el producto en tableNV
     private int itemSelectNV; // Fila seleccionada de la tableNV
+    private boolean isSelectItemNV = false; // Verifica que haya sido seleccionado un item de la tabla
     private final DefaultTableModel tableModelNewSales = new DefaultTableModel();
 
     /**
@@ -369,7 +373,7 @@ public class MainController implements ActionListener {
             if (systemPrincipal.tableClientes.rowAtPoint(e.getPoint()) != -1) { // Validar si se da click en la tabla
                 int index = systemPrincipal.tableClientes.rowAtPoint(e.getPoint()); // Obtener la fila seleccionada
                 customer.setIdentification(systemPrincipal.tableClientes.getValueAt(index, 0).toString()); // Enviar el valor de lo indicado
-                switch (customerImpl.findById(customer)) { 
+                switch (customerImpl.findById(customer)) {
                     case 1 -> {
                         systemPrincipal.fieldIdClientes.setText(String.valueOf(customer.getIdCustomer()));
                         systemPrincipal.fieldIdentificacionClientes.setText(String.valueOf(customer.getIdentification()));
@@ -378,6 +382,7 @@ public class MainController implements ActionListener {
                         systemPrincipal.fieldEmailClientes.setText(customer.getEmail());
                         systemPrincipal.fieldDireccionClientes.setText(customer.getAddress());
                         systemPrincipal.fieldRazonSocialClientes.setText(customer.getRazonSocial());
+                        isSelectItemCustomer = true; // Indica que ha sido seleccionado un item de la tabla
                     }
                     case 2 ->
                         JOptionPane.showMessageDialog(null, "Problema al seleccionar el registro");
@@ -407,6 +412,7 @@ public class MainController implements ActionListener {
                         systemPrincipal.fieldEmailProveedor.setText(supplier.getEmail());
                         systemPrincipal.fieldDireccionProveedor.setText(supplier.getAddress());
                         systemPrincipal.fieldRazonSocialProveedor.setText(supplier.getRazonSocial());
+                        isSelectItemSupplier = true; // Indica que ha sido seleccionado un item de la tabla
                     }
                     case 2 ->
                         JOptionPane.showMessageDialog(null, "Problema al seleccionar el registro");
@@ -435,6 +441,7 @@ public class MainController implements ActionListener {
                         systemPrincipal.fieldCantidadProductos.setText(String.valueOf(product.getCount()));
                         systemPrincipal.fieldPrecioProductos.setText(String.valueOf(product.getPrice()));
                         systemPrincipal.comboBoxProveedorProductos.setSelectedItem(product.getSupplier());
+                        isSelectItemProduct = true; // Indica que ha sido seleccionado un item de la tabla
                     }
                     case 2 ->
                         JOptionPane.showMessageDialog(null, "Problema al seleccionar el registro");
@@ -456,6 +463,7 @@ public class MainController implements ActionListener {
         public void mouseClicked(MouseEvent e) {
             if (systemPrincipal.tableNV.rowAtPoint(e.getPoint()) != -1) {
                 itemSelectNV = systemPrincipal.tableNV.rowAtPoint(e.getPoint());
+                isSelectItemNV = true;
             }
         }
     };
@@ -641,9 +649,14 @@ public class MainController implements ActionListener {
          * ActionEnvent de SYSTEMPRINCIPAL - New Sales
          */
         if (e.getSource() == systemPrincipal.btnEliminarNV) {
-            if (JOptionPane.showConfirmDialog(null, "¿Seguro de sacar el producto " + tableModelNewSales.getValueAt(itemSelectNV, 1) + " de la lista?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                tableModelNewSales.removeRow(itemSelectNV);
-                systemPrincipal.fieldTotalPagarNV.setText(String.valueOf(totalToPay()));
+            if (isSelectItemNV) { // Confirma que primero haya sido seleccionado un registro de la tabla
+                if (JOptionPane.showConfirmDialog(null, "¿Seguro de sacar el producto " + tableModelNewSales.getValueAt(itemSelectNV, 1) + " de la lista?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    tableModelNewSales.removeRow(itemSelectNV);
+                    systemPrincipal.fieldTotalPagarNV.setText(String.valueOf(totalToPay()));
+                }
+                isSelectItemNV = false; // Sea cual sea la respuesta se pone en false para que tenga que volver a seleccionar un item
+            } else {
+                JOptionPane.showMessageDialog(null, "Seleccione primero el producto en la tabla");
             }
         }
         /**
@@ -745,8 +758,8 @@ public class MainController implements ActionListener {
             }
         }
         if (e.getSource() == systemPrincipal.btnEliminarClientes) {
-            if (customer.getIdCustomer() != 0) { // confirma que primero haya sido seleccionado un registro
-                if (JOptionPane.showConfirmDialog(null, "¿Seguro de eliminar el registro?", "Eliminar registro cliente", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            if (isSelectItemCustomer) { // confirma que primero haya sido seleccionado un registro de la tabla
+                if (JOptionPane.showConfirmDialog(null, "¿Seguro de eliminar el registro " + customer.getIdentification() + "?", "Eliminar registro cliente", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                     switch (customerImpl.delete(customer)) {
                         case 1 -> {
                             JOptionPane.showMessageDialog(null, "Registro de cliente con N° identificación " + customer.getIdentification() + " eliminado");
@@ -870,8 +883,8 @@ public class MainController implements ActionListener {
             }
         }
         if (e.getSource() == systemPrincipal.btnEliminarProveedor) {
-            if (supplier.getIdSupplier() != 0) { // confirma que primero haya sido seleccionado un registro
-                if (JOptionPane.showConfirmDialog(null, "¿Seguro de eliminar el registro?", "Eliminar registro proveedor", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            if (isSelectItemSupplier) { // confirma que primero haya sido seleccionado un registro de la tabla
+                if (JOptionPane.showConfirmDialog(null, "¿Seguro de eliminar el registro " + supplier.getRut() + "?", "Eliminar registro proveedor", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                     switch (supplierImpl.delete(supplier)) {
                         case 1 -> {
                             JOptionPane.showMessageDialog(null, "Registro de proveedor con RUT " + supplier.getRut() + " eliminado");
@@ -924,7 +937,7 @@ public class MainController implements ActionListener {
                 case 3 ->
                     JOptionPane.showMessageDialog(null, "Precio o Cantidad invalidos, ingrese valores numéricos");
                 case 0 ->
-                    JOptionPane.showMessageDialog(null, "Código invalido, ingrese valores numéricos");
+                    JOptionPane.showMessageDialog(null, "Ingrese un Código numérico");
             }
         }
         if (e.getSource() == systemPrincipal.btnBuscarProductos) {
@@ -958,40 +971,44 @@ public class MainController implements ActionListener {
             }
         }
         if (e.getSource() == systemPrincipal.btnActualizarProductos) {
-            switch (validationEnteredDataProduct()) {
-                case 1 -> {
-                    product.setCode(codeProduct);
-                    product.setName(nameProduct);
-                    product.setCount(countProduct);
-                    product.setPrice(priceProduct);
-                    product.setSupplier(supplierProduct);
-                    switch (productImpl.update(product)) {
-                        case 1 -> {
-                            JOptionPane.showMessageDialog(null, "Registro producto actualizado");
-                            toCleanProduct();
+            if (product.getIdProduct() != 0) { // Confirma que primero haya sido seleccionado un registro
+                switch (validationEnteredDataProduct()) {
+                    case 1 -> {
+                        product.setCode(codeProduct);
+                        product.setName(nameProduct);
+                        product.setCount(countProduct);
+                        product.setPrice(priceProduct);
+                        product.setSupplier(supplierProduct);
+                        switch (productImpl.update(product)) {
+                            case 1 -> {
+                                JOptionPane.showMessageDialog(null, "Registro producto actualizado");
+                                toCleanProduct();
+                            }
+                            case 2 ->
+                                JOptionPane.showMessageDialog(null, "No se realizó la actualización");
+                            case 3 ->
+                                JOptionPane.showMessageDialog(null, "N° identificación ya registrado");
+                            case 4 ->
+                                JOptionPane.showMessageDialog(null, "Ingrese correctamente los valores solicitados");
+                            case 0 ->
+                                JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                         }
-                        case 2 ->
-                            JOptionPane.showMessageDialog(null, "No se realizó la actualización");
-                        case 3 ->
-                            JOptionPane.showMessageDialog(null, "N° identificación ya registrado");
-                        case 4 ->
-                            JOptionPane.showMessageDialog(null, "Ingrese correctamente los valores solicitados");
-                        case 0 ->
-                            JOptionPane.showMessageDialog(null, "Problemas en la conexión");
+                        addListTableModelProduct(); // actualizar la tabla producto
                     }
-                    addListTableModelProduct(); // actualizar la tabla producto
+                    case 2 ->
+                        JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
+                    case 3 ->
+                        JOptionPane.showMessageDialog(null, "Precio o Cantidad invalidos, ingrese valores numéricos");
+                    case 0 ->
+                        JOptionPane.showMessageDialog(null, "Ingrese un Código numérico");
                 }
-                case 2 ->
-                    JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
-                case 3 ->
-                    JOptionPane.showMessageDialog(null, "Precio o Cantidad invalidos, ingrese valores numéricos");
-                case 0 ->
-                    JOptionPane.showMessageDialog(null, "Código invalido, ingrese valores numéricos");
+            } else {
+                JOptionPane.showMessageDialog(null, "Seleccione primero un registro para actualizar");
             }
         }
         if (e.getSource() == systemPrincipal.btnEliminarProductos) {
-            if (product.getIdProduct() != 0) {
-                if (JOptionPane.showConfirmDialog(null, "¿Seguro de eliminar el registro?", "Eliminar registro producto", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            if (isSelectItemProduct) { // confirma que primero haya sido seleccionado un registro de la tabla
+                if (JOptionPane.showConfirmDialog(null, "¿Seguro de eliminar el registro " + product.getCode() + "?", "Eliminar registro producto", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                     switch (productImpl.delete(product)) {
                         case 1 -> {
                             JOptionPane.showMessageDialog(null, "Registro de producto con N° código " + product.getCode() + " eliminado");
@@ -1029,9 +1046,11 @@ public class MainController implements ActionListener {
         systemPrincipal.fieldDireccionClientes.setText("");
         systemPrincipal.fieldRazonSocialClientes.setText("");
         systemPrincipal.fieldIdClientes.setText("");
+        systemPrincipal.fieldBuscarClientes.setText("");
         // Quitar el valor de identification y idCustomer para que no pueda eliminar ni actualizar 
         customer.setIdCustomer(0);
         customer.setIdentification(null);
+        isSelectItemCustomer = false;
     }
 
     /**
@@ -1045,9 +1064,12 @@ public class MainController implements ActionListener {
         systemPrincipal.fieldDireccionProveedor.setText("");
         systemPrincipal.fieldRazonSocialProveedor.setText("");
         systemPrincipal.fieldIdProveedor.setText("");
+        systemPrincipal.fieldBuscarProveedor.setText("");
         // Quitar el valor de identification y idCustomer para que no pueda eliminar ni actualizar 
         supplier.setIdSupplier(0);
         supplier.setRut(null);
+        isSelectItemSupplier = false;
+
     }
 
     /**
@@ -1060,9 +1082,11 @@ public class MainController implements ActionListener {
         systemPrincipal.fieldPrecioProductos.setText("");
         systemPrincipal.comboBoxProveedorProductos.setSelectedIndex(0);
         systemPrincipal.fieldIdProducto.setText("");
+        systemPrincipal.fieldBuscarProductos.setText("");
         // Quitar el valor de Código y idProduct para que no pueda eliminar ni actualizar 
         product.setIdProduct(0);
         product.setCode(null);
+        isSelectItemProduct = false;
     }
 
     private void toCleanNewSale() {
