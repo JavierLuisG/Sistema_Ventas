@@ -29,7 +29,7 @@ public class SystemPrincipalView extends javax.swing.JFrame {
         fieldCantidadNV = new javax.swing.JTextField();
         fieldPrecioNV = new javax.swing.JTextField();
         fieldStockNV = new javax.swing.JTextField();
-        fieldDNIClienteNV = new javax.swing.JTextField();
+        fieldIdentificationClienteNV = new javax.swing.JTextField();
         fieldNombreClienteNV = new javax.swing.JTextField();
         fieldTotalPagarNV = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
@@ -270,7 +270,7 @@ public class SystemPrincipalView extends javax.swing.JFrame {
 
         fieldStockNV.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
 
-        fieldDNIClienteNV.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
+        fieldIdentificationClienteNV.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
 
         fieldNombreClienteNV.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
 
@@ -322,7 +322,7 @@ public class SystemPrincipalView extends javax.swing.JFrame {
                 .addGroup(panelNVLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(fieldNombreClienteNV, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(panelNVLayout.createSequentialGroup()
-                        .addComponent(fieldDNIClienteNV, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(fieldIdentificationClienteNV, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(fieldTelefonoNV, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -394,7 +394,7 @@ public class SystemPrincipalView extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                         .addGroup(panelNVLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel6)
-                            .addComponent(fieldDNIClienteNV, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(fieldIdentificationClienteNV, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(fieldTelefonoNV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(fieldDireccionNV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(fieldRazonSocialNV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1123,7 +1123,6 @@ public class SystemPrincipalView extends javax.swing.JFrame {
     public javax.swing.JTextField fieldCantidadProductos;
     public javax.swing.JTextField fieldCodigoNV;
     public javax.swing.JTextField fieldCodigoProductos;
-    public javax.swing.JTextField fieldDNIClienteNV;
     public javax.swing.JTextField fieldDireccionClientes;
     public javax.swing.JTextField fieldDireccionConfig;
     public javax.swing.JTextField fieldDireccionNV;
@@ -1136,6 +1135,7 @@ public class SystemPrincipalView extends javax.swing.JFrame {
     public javax.swing.JTextField fieldIdProveedor;
     public javax.swing.JTextField fieldIdVentas;
     public javax.swing.JTextField fieldIdentificacionClientes;
+    public javax.swing.JTextField fieldIdentificationClienteNV;
     public javax.swing.JTextField fieldNombreClienteNV;
     public javax.swing.JTextField fieldNombreClientes;
     public javax.swing.JTextField fieldNombreConfig;

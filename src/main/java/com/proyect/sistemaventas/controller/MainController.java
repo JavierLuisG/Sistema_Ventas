@@ -60,7 +60,7 @@ public class MainController implements ActionListener {
     private String addressSupplier;
     private String razonSocialSupplier;
     private final DefaultTableModel tableModelSupplier = new DefaultTableModel();
-    private List<Supplier> listSupplier; // La puse global para poder agregar los nombre al comboBox de productos
+    private List<Supplier> listSupplier; // La puse global para poder agregar los nombres al comboBox de productos
 
     /* Variables de Product */
     private String codeProduct;
@@ -73,7 +73,7 @@ public class MainController implements ActionListener {
     private List<Product> listProduct;
 
     /* Variables de New Sales -> Este no tiene un modelo */
-    private boolean codeSelectNV = false; // Para verificar que primero haya sido ingresado un codigo, es decir, un producto
+    private boolean codeSelectNV = false; // Para verificar que primero haya sido ingresado un código, es decir, un producto
     private int countNewSalesNV; // La cantidad de productos que quiere comprar el usuario
     private int totalByProductNV; // Total a pagar en relación al producto, es decir, en la fila generada
     private String valueCountNV; // Valor obtenido de la fieldCantidadNV
@@ -107,7 +107,7 @@ public class MainController implements ActionListener {
 
     /**
      * Permite inicializar la página principal del sistema de ventas y los
-     * modelos
+     * modelos, este se ejecuta cuando se de click inicia sesión
      */
     private void startSystemPrincipal() {
         systemPrincipal = new SystemPrincipalView();
@@ -128,18 +128,22 @@ public class MainController implements ActionListener {
      * de Clientes
      */
     private void startCustomer() {
+        /* Inicializar las clase relacionadas al modelo */
         customer = new Customer();
         customerImpl = new CustomerDAOImpl();
+        /* Acciones sobre los botones */
         systemPrincipal.btnGuardarClientes.addActionListener(this);
         systemPrincipal.btnBuscarClientes.addActionListener(this);
         systemPrincipal.btnActualizarClientes.addActionListener(this);
         systemPrincipal.btnEliminarClientes.addActionListener(this);
         systemPrincipal.btnLimpiarFieldsClientes.addActionListener(this);
-        /* Asignar el model a la tabla correspondiente y asignar las columnas con sus filas*/
+        /* Asignar el model a la tabla correspondiente y asignar las columnas con sus filas */
         systemPrincipal.tableClientes.setModel(tableModelCustomer);
         loadModelCustomer();
-        systemPrincipal.tableClientes.addMouseListener(adapterCustomer); // Dar acción al mouse para seleccionar la fila de la tabla
-        systemPrincipal.tableClientes.setEnabled(false); // No permite modificar los valores en la tabla
+        /* Dar acción al mouse para seleccionar la fila de la tabla */
+        systemPrincipal.tableClientes.addMouseListener(mouseAdapterCustomer);
+        /* Negar modificación del valor */
+        systemPrincipal.tableClientes.setEnabled(false); // La tabla
     }
 
     /**
@@ -147,17 +151,22 @@ public class MainController implements ActionListener {
      * de Proveedor
      */
     private void startSupplier() {
+        /* Inicializar las clase relacionadas al modelo */
         supplier = new Supplier();
         supplierImpl = new SupplierDAOImpl();
+        /* Acciones sobre los botones */
         systemPrincipal.btnGuardarProveedor.addActionListener(this);
         systemPrincipal.btnBuscarProveedor.addActionListener(this);
         systemPrincipal.btnActualizarProveedor.addActionListener(this);
         systemPrincipal.btnEliminarProveedor.addActionListener(this);
         systemPrincipal.btnLimpiarFieldsProveedor.addActionListener(this);
+        /* Asignar el model a la tabla correspondiente y asignar las columnas con sus filas */
         systemPrincipal.tableProveedor.setModel(tableModelSupplier);
         loadModelSupplier();
-        systemPrincipal.tableProveedor.addMouseListener(adapterSupplier);
-        systemPrincipal.tableProveedor.setEnabled(false);
+        /* Dar acción al mouse para seleccionar la fila de la tabla */
+        systemPrincipal.tableProveedor.addMouseListener(mouseAdapterSupplier);
+        /* Negar modificación del valor */
+        systemPrincipal.tableProveedor.setEnabled(false); // La tabla
     }
 
     /**
@@ -165,35 +174,48 @@ public class MainController implements ActionListener {
      * de Producto
      */
     private void startProduct() {
+        /* Inicializar las clase relacionadas al modelo */
         product = new Product();
         productImpl = new ProductDAOImpl();
-        updateComoBoxSupplierOfProduct();
+        updateComoBoxSupplierOfProduct(); // Asignar valores al comboBoxSupplier en product
+        /* Acciones sobre los botones */
         systemPrincipal.btnGuardarProductos.addActionListener(this);
         systemPrincipal.btnBuscarProductos.addActionListener(this);
         systemPrincipal.btnActualizarProductos.addActionListener(this);
         systemPrincipal.btnEliminarProductos.addActionListener(this);
         systemPrincipal.btnLimpiarFieldsProductos.addActionListener(this);
         systemPrincipal.btnExcelProductos.addActionListener(this);
+        /* Acción al mouse para seleccionar la fila de la tabla */
+        systemPrincipal.tableProductos.addMouseListener(mouseAdapterProduct);
+        /* Asignar el model a la tabla correspondiente y asignar las columnas con sus filas */
         systemPrincipal.tableProductos.setModel(tableModelProduct);
         loadModelProduct();
-        systemPrincipal.tableProductos.addMouseListener(adapterProduct);
-        systemPrincipal.tableProductos.setEnabled(false);
+        /* Negar modificación del valor */
+        systemPrincipal.tableProductos.setEnabled(false); // La tabla
     }
 
     /**
      * No es necesario inicializar ya que se optione la información de product
      */
     private void startNewSale() {
-        systemPrincipal.fieldCodigoNV.addKeyListener(adapterSalesCode);
-        systemPrincipal.fieldCantidadNV.addKeyListener(adapterSalesCode);
-        systemPrincipal.fieldProductoNV.setEditable(false);
+        /* Acciones sobre los botones */
+        systemPrincipal.btnEliminarNV.addActionListener(this);
+        /* Acción al mouse para seleccionar la fila de la tabla */
+        systemPrincipal.tableNV.addMouseListener(mouseAdapterNewSales);
+        /* Accion enter sobre las cajas */
+        systemPrincipal.fieldCodigoNV.addKeyListener(keyAdapterNewSale);
+        systemPrincipal.fieldCantidadNV.addKeyListener(keyAdapterNewSale);
+        systemPrincipal.fieldIdentificationClienteNV.addKeyListener(keyAdapterNewSale);
+        /* Asignar el model a la tabla correspondiente y asignar las columnas con sus filas*/
+        systemPrincipal.tableNV.setModel(tableModelNewSales);
+        loadModelNewSales();
+        /* Negar modificación del valor */
+        systemPrincipal.tableNV.setEnabled(false); // La tabla
+        systemPrincipal.fieldProductoNV.setEditable(false); // Las cajas
         systemPrincipal.fieldStockNV.setEditable(false);
         systemPrincipal.fieldPrecioNV.setEditable(false);
-        systemPrincipal.tableNV.setModel(tableModelNewSales);
-        systemPrincipal.btnEliminarNV.addActionListener(this);
-        loadModelNewSales();
-        systemPrincipal.tableNV.addMouseListener(adapterNewSales);
-        systemPrincipal.tableNV.setEnabled(false);
+        systemPrincipal.fieldNombreClienteNV.setEditable(false);
+        systemPrincipal.fieldTotalPagarNV.setEditable(false);
     }
 
     /**
@@ -202,7 +224,7 @@ public class MainController implements ActionListener {
      */
     private void updateComoBoxSupplierOfProduct() {
         systemPrincipal.comboBoxProveedorProductos.removeAllItems(); // Permite borrar la info anterior y asi mostrar la info actualizada
-        systemPrincipal.comboBoxProveedorProductos.addItem(firstItemComboBox); // Primer item para diferenciar de los proveedores         
+        systemPrincipal.comboBoxProveedorProductos.addItem(firstItemComboBox); // Primer item para diferenciar de los proveedores
         // El for permite agregar el nombre de los proveedores al comboBox obtenidos de la listSupplier
         for (Supplier sup : listSupplier) {
             nameSupplier = sup.getName();
@@ -221,6 +243,7 @@ public class MainController implements ActionListener {
         tableModelCustomer.addColumn("Teléfono");
         tableModelCustomer.addColumn("Dirección");
         tableModelCustomer.addColumn("Razón social");
+        /* Asignar el tamaño a las columnas */
         int width[] = {75, 150, 180, 75, 120, 90};
         for (int i = 0; i < 6; i++) {
             systemPrincipal.tableClientes.getColumnModel().getColumn(i).setPreferredWidth(width[i]);
@@ -239,11 +262,12 @@ public class MainController implements ActionListener {
         tableModelSupplier.addColumn("Teléfono");
         tableModelSupplier.addColumn("Dirección");
         tableModelSupplier.addColumn("Razón social");
+        /* Asignar el ancho de las columnas */
         int width[] = {75, 150, 180, 75, 120, 90};
         for (int i = 0; i < 6; i++) {
             systemPrincipal.tableProveedor.getColumnModel().getColumn(i).setPreferredWidth(width[i]);
         }
-        addListTableModelSupplier();
+        addListTableModelSupplier(); // Asignar las filas según los datos traidos de la base de datos
     }
 
     /**
@@ -256,11 +280,12 @@ public class MainController implements ActionListener {
         tableModelProduct.addColumn("Proveedor");
         tableModelProduct.addColumn("Cantidad");
         tableModelProduct.addColumn("Precio");
+        /* Asignar el ancho de las columnas */
         int width[] = {50, 190, 190, 50, 50};
         for (int i = 0; i < 5; i++) {
             systemPrincipal.tableProductos.getColumnModel().getColumn(i).setPreferredWidth(width[i]);
         }
-        addListTableModelProduct();
+        addListTableModelProduct(); // Asignar las filas según los datos traidos de la base de datos
     }
 
     /**
@@ -273,6 +298,7 @@ public class MainController implements ActionListener {
         tableModelNewSales.addColumn("Cantidad");
         tableModelNewSales.addColumn("Precio p/u");
         tableModelNewSales.addColumn("Total");
+        /* Asignar el ancho de las columnas */
         int width[] = {80, 210, 80, 80, 80};
         for (int i = 0; i < 5; i++) {
             systemPrincipal.tableNV.getColumnModel().getColumn(i).setPreferredWidth(width[i]);
@@ -284,7 +310,7 @@ public class MainController implements ActionListener {
      */
     private void addListTableModelCustomer() {
         listCustomer = customerImpl.findAll(customer);
-        tableModelCustomer.setRowCount(0); // Cuando se ejecuta permite comenzar las filas desde la posicion 0, asi no se repiten cada vez que se llame
+        tableModelCustomer.setRowCount(0); // Permite comenzar las filas desde la posicion 0, asi no se repiten cada vez que se llame
         for (Customer cstmr : listCustomer) {
             identificationCustomer = cstmr.getIdentification();
             nameCustomer = cstmr.getName();
@@ -302,7 +328,7 @@ public class MainController implements ActionListener {
      */
     private void addListTableModelSupplier() {
         listSupplier = supplierImpl.findAll(supplier);
-        tableModelSupplier.setRowCount(0); // Cuando se ejecuta permite comenzar las filas desde la posicion 0, asi no se repiten cada vez que se llame
+        tableModelSupplier.setRowCount(0); // Permite comenzar las filas desde la posicion 0, asi no se repiten cada vez que se llame
         for (Supplier sup : listSupplier) {
             rutSupplier = sup.getRut();
             nameSupplier = sup.getName();
@@ -320,7 +346,7 @@ public class MainController implements ActionListener {
      */
     private void addListTableModelProduct() {
         listProduct = productImpl.findAll(product);
-        tableModelProduct.setRowCount(0);
+        tableModelProduct.setRowCount(0); // Permite comenzar las filas desde la posicion 0, asi no se repiten cada vez que se llame
         for (Product pro : listProduct) {
             codeProduct = pro.getCode();
             nameProduct = pro.getName();
@@ -337,13 +363,13 @@ public class MainController implements ActionListener {
      * Así como el ActionEvent para los botones. Para eliminar un registro lo
      * hago por medio del identification de Customer.
      */
-    MouseAdapter adapterCustomer = new MouseAdapter() {
+    MouseAdapter mouseAdapterCustomer = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (systemPrincipal.tableClientes.rowAtPoint(e.getPoint()) != -1) {
-                int index = systemPrincipal.tableClientes.rowAtPoint(e.getPoint());
-                customer.setIdentification(systemPrincipal.tableClientes.getValueAt(index, 0).toString());
-                switch (customerImpl.findById(customer)) {
+            if (systemPrincipal.tableClientes.rowAtPoint(e.getPoint()) != -1) { // Validar si se da click en la tabla
+                int index = systemPrincipal.tableClientes.rowAtPoint(e.getPoint()); // Obtener la fila seleccionada
+                customer.setIdentification(systemPrincipal.tableClientes.getValueAt(index, 0).toString()); // Enviar el valor de lo indicado
+                switch (customerImpl.findById(customer)) { 
                     case 1 -> {
                         systemPrincipal.fieldIdClientes.setText(String.valueOf(customer.getIdCustomer()));
                         systemPrincipal.fieldIdentificacionClientes.setText(String.valueOf(customer.getIdentification()));
@@ -364,16 +390,14 @@ public class MainController implements ActionListener {
     };
 
     /**
-     * Permite seleccionar la fila de la tabla PROVEEDOR y generar el evento...
-     * Así como el ActionEvent para los botones. Para eliminar un registro lo
-     * hago por medio del RUT de Supplier
+     * Permite seleccionar la fila de la tabla PROVEEDOR y generar el evento.
      */
-    MouseAdapter adapterSupplier = new MouseAdapter() {
+    MouseAdapter mouseAdapterSupplier = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (systemPrincipal.tableProveedor.rowAtPoint(e.getPoint()) != -1) {
-                int index = systemPrincipal.tableProveedor.rowAtPoint(e.getPoint());
-                supplier.setRut(systemPrincipal.tableProveedor.getValueAt(index, 0).toString());
+            if (systemPrincipal.tableProveedor.rowAtPoint(e.getPoint()) != -1) { // Validar si se da click en la tabla
+                int index = systemPrincipal.tableProveedor.rowAtPoint(e.getPoint()); // Obtener la fila seleccionada
+                supplier.setRut(systemPrincipal.tableProveedor.getValueAt(index, 0).toString()); // Enviar el valor de lo indicado
                 switch (supplierImpl.findById(supplier)) {
                     case 1 -> {
                         systemPrincipal.fieldIdProveedor.setText(String.valueOf(supplier.getIdSupplier()));
@@ -395,16 +419,14 @@ public class MainController implements ActionListener {
     };
 
     /**
-     * Permite seleccionar la fila de la tabla PRODUCTOS y generar el evento...
-     * Así como el ActionEvent para los botones. Para eliminar un registro lo
-     * hago por medio del code de Product
+     * Permite seleccionar la fila de la tabla PRODUCTOS y generar el evento.
      */
-    MouseAdapter adapterProduct = new MouseAdapter() {
+    MouseAdapter mouseAdapterProduct = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (systemPrincipal.tableProductos.rowAtPoint(e.getPoint()) != -1) {
-                int index = systemPrincipal.tableProductos.rowAtPoint(e.getPoint());
-                product.setCode(systemPrincipal.tableProductos.getValueAt(index, 0).toString());
+            if (systemPrincipal.tableProductos.rowAtPoint(e.getPoint()) != -1) { // Validar si se da click en la tabla
+                int index = systemPrincipal.tableProductos.rowAtPoint(e.getPoint()); // Obtener la fila seleccionada
+                product.setCode(systemPrincipal.tableProductos.getValueAt(index, 0).toString()); // Enviar el valor de lo indicado
                 switch (productImpl.findById(product)) {
                     case 1 -> {
                         systemPrincipal.fieldIdProducto.setText(String.valueOf(product.getIdProduct()));
@@ -426,10 +448,10 @@ public class MainController implements ActionListener {
 
     /**
      * Permite seleccionar la fila de la tabla NUEVA VENTA y generar el evento.
-     * En este evento se realiza para seleccionar el item que será sacado de la 
+     * En este evento se realiza para seleccionar el item que será sacado de la
      * tabla
      */
-    MouseAdapter adapterNewSales = new MouseAdapter() {
+    MouseAdapter mouseAdapterNewSales = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
             if (systemPrincipal.tableNV.rowAtPoint(e.getPoint()) != -1) {
@@ -441,10 +463,13 @@ public class MainController implements ActionListener {
     /**
      * Permite generar una acción al dar Click en un elemento
      */
-    KeyAdapter adapterSalesCode = new KeyAdapter() {
+    KeyAdapter keyAdapterNewSale = new KeyAdapter() {
         @Override
         public void keyPressed(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_ENTER) { // Si se genera un enter
+                /**
+                 * Si preciona enter en fieldCodigoNV
+                 */
                 if (e.getSource() == systemPrincipal.fieldCodigoNV) { // Si se genera la acción en determinado elemento
                     codeProduct = systemPrincipal.fieldCodigoNV.getText().trim();
                     if (!codeProduct.equals("")) { // Verificar si está vacio al dar enter
@@ -534,6 +559,9 @@ public class MainController implements ActionListener {
                         toCleanNewSale();
                     }
                 }
+                /**
+                 * Si preciona enter en fieldCantidadNV
+                 */
                 if (e.getSource() == systemPrincipal.fieldCantidadNV) {
                     valueCountNV = systemPrincipal.fieldCantidadNV.getText().trim();
                     switch (validationIndicateCountProductNV(valueCountNV, countProduct)) {
@@ -557,6 +585,31 @@ public class MainController implements ActionListener {
                         }
                         case 5 ->
                             JOptionPane.showMessageDialog(null, "Ingrese primero el código de un producto");
+                    }
+                }
+                /**
+                 * Si preciona enter en fieldIdentificationNumberClienteNV
+                 */
+                if (e.getSource() == systemPrincipal.fieldIdentificationClienteNV) {
+                    identificationCustomer = systemPrincipal.fieldIdentificationClienteNV.getText().trim();
+                    if (!identificationCustomer.equals("")) {
+                        customer.setIdentification(identificationCustomer);
+                        switch (customerImpl.findById(customer)) {
+                            case 1 -> {
+                                nameCustomer = customer.getName();
+                                emailCustomer = customer.getEmail();
+                                phoneNumberCustomer = customer.getPhoneNumber();
+                                addressCustomer = customer.getAddress();
+                                razonSocialCustomer = customer.getRazonSocial();
+                                systemPrincipal.fieldNombreClienteNV.setText(nameCustomer);
+                            }
+                            case 2 ->
+                                JOptionPane.showMessageDialog(null, "N° identificación no registrado");
+                            case 0 ->
+                                JOptionPane.showMessageDialog(null, "Problemas en la conexión");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Ingrese un N° identificación");
                     }
                 }
             }
