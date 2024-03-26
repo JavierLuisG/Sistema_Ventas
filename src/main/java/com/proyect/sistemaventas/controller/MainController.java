@@ -228,11 +228,15 @@ public class MainController implements ActionListener {
      */
     private void updateComoBoxSupplierOfProduct() {
         systemPrincipal.comboBoxProveedorProductos.removeAllItems(); // Permite borrar la info anterior y asi mostrar la info actualizada
-        systemPrincipal.comboBoxProveedorProductos.addItem(firstItemComboBox); // Primer item para diferenciar de los proveedores
         // El for permite agregar el nombre de los proveedores al comboBox obtenidos de la listSupplier
-        for (Supplier sup : listSupplier) {
-            nameSupplier = sup.getName();
-            systemPrincipal.comboBoxProveedorProductos.addItem(nameSupplier);
+        if (!listSupplier.isEmpty()) { // Si la lista está vacía se realiza el for
+            systemPrincipal.comboBoxProveedorProductos.addItem(firstItemComboBox); // Primer item para diferenciar de los proveedores
+            for (Supplier sup : listSupplier) {
+                nameSupplier = sup.getName();
+                systemPrincipal.comboBoxProveedorProductos.addItem(nameSupplier);
+            }
+        } else { // Si no tiene valores solo se agrega el primer item
+            systemPrincipal.comboBoxProveedorProductos.addItem(firstItemComboBox); // Primer item para diferenciar de los proveedores
         }
     }
 
@@ -390,6 +394,7 @@ public class MainController implements ActionListener {
                         JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                 }
                 addListTableModelCustomer(); // Actualizar por si por ejemplo se presenta un case 2 CDU: se elimina en la base de datos, por ende en la aplicación aun sigue existiendo si no se actualiza
+                systemPrincipal.fieldBuscarClientes.setText(""); // Limpiar campo luego de realizar la busqueda
             }
         }
     };
@@ -420,6 +425,7 @@ public class MainController implements ActionListener {
                         JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                 }
                 addListTableModelSupplier(); // Actualizar por si por ejemplo se presenta un case 2 CDU: se elimina en la base de datos, por ende en la aplicación aun sigue existiendo si no se actualiza 
+                systemPrincipal.fieldBuscarProveedor.setText(""); // Limpiar campo luego de realizar la busqueda
             }
         }
     };
@@ -449,6 +455,7 @@ public class MainController implements ActionListener {
                         JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                 }
                 addListTableModelProduct(); // Actualizar por si por ejemplo se presenta un case 2 CDU: se elimina en la base de datos, por ende en la aplicación aun sigue existiendo si no se actualiza
+                systemPrincipal.fieldBuscarProductos.setText(""); // Limpiar campo luego de realizar la busqueda
             }
         }
     };
@@ -469,7 +476,7 @@ public class MainController implements ActionListener {
     };
 
     /**
-     * Permite generar una acción al dar Click en un elemento
+     * Permite generar una acción al dar enter en un elemento
      */
     KeyAdapter keyAdapterNewSale = new KeyAdapter() {
         @Override
@@ -677,7 +684,7 @@ public class MainController implements ActionListener {
                     switch (customerImpl.insert(customer)) {
                         case 1 -> {
                             JOptionPane.showMessageDialog(null, "Registro cliente guardado");
-                            toCleanCustomer();
+                            toCleanCustomer(true);
                         }
                         case 2 ->
                             JOptionPane.showMessageDialog(null, "No se realizó el registro");
@@ -686,7 +693,7 @@ public class MainController implements ActionListener {
                         case 0 ->
                             JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                     }
-                    addListTableModelCustomer(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
+                    addListTableModelCustomer(); // Se actualizan los datos en la tabla cuando se realiza un registro
                 }
                 case 2 ->
                     JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
@@ -718,11 +725,9 @@ public class MainController implements ActionListener {
                         addListTableModelCustomer();
                     }
                 }
-                systemPrincipal.fieldBuscarClientes.setText("");
-                toCleanCustomer();
+                toCleanCustomer(false); // False porque se espera tener solamente el registro buscado, si se actualiza saldrian todos los registros
             } else {
-                toCleanCustomer();
-                addListTableModelCustomer();
+                toCleanCustomer(true);
             }
         }
         if (e.getSource() == systemPrincipal.btnActualizarClientes) {
@@ -738,7 +743,7 @@ public class MainController implements ActionListener {
                         switch (customerImpl.update(customer)) {
                             case 1 -> {
                                 JOptionPane.showMessageDialog(null, "Registro cliente actualizado");
-                                toCleanCustomer();
+                                toCleanCustomer(true);
                             }
                             case 2 ->
                                 JOptionPane.showMessageDialog(null, "No se realizó la actualización");
@@ -749,7 +754,7 @@ public class MainController implements ActionListener {
                             case 0 ->
                                 JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                         }
-                        addListTableModelCustomer(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
+                        addListTableModelCustomer(); // Se limpian los campos y actualizan los datos en la tabla
                     }
                     case 2 ->
                         JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
@@ -766,22 +771,20 @@ public class MainController implements ActionListener {
                     switch (customerImpl.delete(customer)) {
                         case 1 -> {
                             JOptionPane.showMessageDialog(null, "Registro de cliente con N° identificación " + customer.getIdentification() + " eliminado");
-                            toCleanCustomer();
                         }
                         case 2 ->
                             JOptionPane.showMessageDialog(null, "Problema al eliminar el registro");
                         case 0 ->
                             JOptionPane.showMessageDialog(null, "Problema en la conexión");
                     }
-                    addListTableModelCustomer(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
+                    toCleanCustomer(true); // Se puede limpiar todo sin importar la respuesta del switch
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "Seleccione primero un registro para eliminar");
             }
         }
         if (e.getSource() == systemPrincipal.btnLimpiarFieldsClientes) {
-            toCleanCustomer();
-            addListTableModelCustomer();
+            toCleanCustomer(true);
         }
         /**
          * ActionEnvent de SYSTEMPRINCIPAL - Supplier
@@ -798,7 +801,7 @@ public class MainController implements ActionListener {
                     switch (supplierImpl.insert(supplier)) {
                         case 1 -> {
                             JOptionPane.showMessageDialog(null, "Registro proveedor guardado");
-                            toCleanSupplier();
+                            toCleanSupplier(true);
                         }
                         case 2 ->
                             JOptionPane.showMessageDialog(null, "No se realizó el registro");
@@ -807,9 +810,9 @@ public class MainController implements ActionListener {
                         case 0 ->
                             JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                     }
-                    addListTableModelSupplier(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
-                    updateComoBoxSupplierOfProduct(); // Actualizar el comboBox ya que trae el nombre de todos los proveedores
-                    addListTableModelProduct(); // Actualizar la tabla producto
+                    /* Dentro se actualiza la tabla supplier 
+                     * CDU: si se actualiza un proveedor, que se actualice todo de product */
+                    toCleanProduct(true);
                 }
                 case 2 ->
                     JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
@@ -841,11 +844,9 @@ public class MainController implements ActionListener {
                         addListTableModelSupplier();
                     }
                 }
-                systemPrincipal.fieldBuscarClientes.setText("");
-                toCleanSupplier();
+                toCleanSupplier(false); // False porque se espera tener solamente el registro buscado, si se actualiza saldrian todos los registros
             } else {
-                toCleanCustomer();
-                addListTableModelSupplier();
+                toCleanSupplier(true);
             }
         }
         if (e.getSource() == systemPrincipal.btnActualizarProveedor) {
@@ -861,7 +862,7 @@ public class MainController implements ActionListener {
                         switch (supplierImpl.update(supplier)) {
                             case 1 -> {
                                 JOptionPane.showMessageDialog(null, "Registro proveedor actualizado");
-                                toCleanSupplier();
+                                toCleanSupplier(true); // Necesario limpiar todo
                             }
                             case 2 ->
                                 JOptionPane.showMessageDialog(null, "No se realizó la actualización");
@@ -872,9 +873,9 @@ public class MainController implements ActionListener {
                             case 0 ->
                                 JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                         }
-                        addListTableModelSupplier(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
-                        updateComoBoxSupplierOfProduct(); // Actualizar el comboBox ya que trae el nombre de todos los proveedores
-                        addListTableModelProduct(); // Actualizar la tabla producto
+                        /* Dentro se actualiza la tabla supplier y no se limpian los campos
+                         * CDU: si se actualiza un proveedor, que se actualice todo de product */
+                        toCleanProduct(true);
                     }
                     case 2 ->
                         JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
@@ -891,24 +892,21 @@ public class MainController implements ActionListener {
                     switch (supplierImpl.delete(supplier)) {
                         case 1 -> {
                             JOptionPane.showMessageDialog(null, "Registro de proveedor con RUT " + supplier.getRut() + " eliminado");
-                            toCleanSupplier();
                         }
                         case 2 ->
                             JOptionPane.showMessageDialog(null, "Problema al eliminar el registro");
                         case 0 ->
                             JOptionPane.showMessageDialog(null, "Problema en la conexión");
                     }
-                    addListTableModelSupplier(); // De esta manera se actualizan los datos en la tabla cuando se realiza un registro
-                    updateComoBoxSupplierOfProduct(); // Actualizar el comboBox ya que trae el nombre de todos los proveedores
-                    addListTableModelProduct(); // Actualizar la tabla producto
+                    toCleanSupplier(true);
+                    toCleanProduct(true); // CDU: si se elimina un proveedor, que se actualice todo de product
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "Seleccione primero un registro para eliminar");
             }
         }
         if (e.getSource() == systemPrincipal.btnLimpiarFieldsProveedor) {
-            toCleanSupplier();
-            addListTableModelSupplier();
+            toCleanSupplier(true);
         }
         /**
          * ActionEnvent de SYSTEMPRINCIPAL - Product
@@ -924,7 +922,7 @@ public class MainController implements ActionListener {
                     switch (productImpl.insert(product)) {
                         case 1 -> {
                             JOptionPane.showMessageDialog(null, "Registro producto guardado");
-                            toCleanProduct();
+                            toCleanProduct(true); // Necesario limpiar todo
                         }
                         case 2 ->
                             JOptionPane.showMessageDialog(null, "No se realizó el registro");
@@ -933,7 +931,7 @@ public class MainController implements ActionListener {
                         case 0 ->
                             JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                     }
-                    addListTableModelProduct(); // actualizar la tabla producto
+                    addListTableModelProduct(); // Solo se necesita actualizar la tabla producto
                 }
                 case 2 ->
                     JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
@@ -966,11 +964,9 @@ public class MainController implements ActionListener {
                         addListTableModelProduct();
                     }
                 }
-                systemPrincipal.fieldBuscarClientes.setText("");
-                toCleanProduct();
+                toCleanProduct(false); // False porque se espera tener solamente el registro buscado, si se actualiza saldrian todos los registros
             } else {
-                toCleanProduct();
-                addListTableModelProduct();
+                toCleanProduct(true);
             }
         }
         if (e.getSource() == systemPrincipal.btnActualizarProductos) {
@@ -985,7 +981,7 @@ public class MainController implements ActionListener {
                         switch (productImpl.update(product)) {
                             case 1 -> {
                                 JOptionPane.showMessageDialog(null, "Registro producto actualizado");
-                                toCleanProduct();
+                                toCleanProduct(true); // Necesario limpiar todo
                             }
                             case 2 ->
                                 JOptionPane.showMessageDialog(null, "No se realizó la actualización");
@@ -996,7 +992,7 @@ public class MainController implements ActionListener {
                             case 0 ->
                                 JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                         }
-                        addListTableModelProduct(); // actualizar la tabla producto
+                        addListTableModelProduct(); // Solo se necesita actualizar la tabla producto
                     }
                     case 2 ->
                         JOptionPane.showMessageDialog(null, "Ingrese los valores solicitados");
@@ -1015,22 +1011,20 @@ public class MainController implements ActionListener {
                     switch (productImpl.delete(product)) {
                         case 1 -> {
                             JOptionPane.showMessageDialog(null, "Registro de producto con N° código " + product.getCode() + " eliminado");
-                            toCleanProduct();
                         }
                         case 2 ->
                             JOptionPane.showMessageDialog(null, "Problema al eliminar el registro");
                         case 0 ->
                             JOptionPane.showMessageDialog(null, "Problema en la conexión");
                     }
-                    addListTableModelProduct(); // actualizar tabla de productos
+                    toCleanProduct(true); // Se puede limpiar todo sin importar la respuesta del switch
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "Seleccione primeno un registro para eliminar");
             }
         }
         if (e.getSource() == systemPrincipal.btnLimpiarFieldsProductos) {
-            toCleanProduct();
-            addListTableModelProduct();
+            toCleanProduct(true);
         }
         if (e.getSource() == systemPrincipal.btnExcelProductos) {
             ExcelReport export = new ExcelReport();
@@ -1040,8 +1034,11 @@ public class MainController implements ActionListener {
 
     /**
      * Limpiar los campos de Customer
+     *
+     * El parametro en true permite ejecutar la actualización de la tabla
+     * cliente
      */
-    private void toCleanCustomer() {
+    private void toCleanCustomer(boolean all) {
         systemPrincipal.fieldIdentificacionClientes.setText("");
         systemPrincipal.fieldNombreClientes.setText("");
         systemPrincipal.fieldTelefonoClientes.setText("");
@@ -1051,12 +1048,18 @@ public class MainController implements ActionListener {
         systemPrincipal.fieldIdClientes.setText("");
         systemPrincipal.fieldBuscarClientes.setText("");
         isSelectItemCustomer = false;
+        if (all) {
+            addListTableModelCustomer();
+        }
     }
 
     /**
      * Limpiar los campos de Supplier
+     *
+     * El parametro en true permite ejecutar la actualización de la tabla
+     * proveedor
      */
-    private void toCleanSupplier() {
+    private void toCleanSupplier(boolean all) {
         systemPrincipal.fieldRutProveedor.setText("");
         systemPrincipal.fieldNombreProveedor.setText("");
         systemPrincipal.fieldTelefonoProveedor.setText("");
@@ -1066,13 +1069,18 @@ public class MainController implements ActionListener {
         systemPrincipal.fieldIdProveedor.setText("");
         systemPrincipal.fieldBuscarProveedor.setText("");
         isSelectItemSupplier = false;
-
+        if (all) {
+            addListTableModelSupplier(); // Actualizar la tabla proveedor
+        }
     }
 
     /**
      * Limpiar los campos de Product
+     *
+     * El parametro en true permite ejecutar la actualización del comboBox, por
+     * tal razón para buscar un registtro debe estar en false
      */
-    private void toCleanProduct() {
+    private void toCleanProduct(boolean all) {
         systemPrincipal.fieldCodigoProductos.setText("");
         systemPrincipal.fieldNombreProductos.setText("");
         systemPrincipal.fieldCantidadProductos.setText("");
@@ -1081,6 +1089,11 @@ public class MainController implements ActionListener {
         systemPrincipal.fieldIdProducto.setText("");
         systemPrincipal.fieldBuscarProductos.setText("");
         isSelectItemProduct = false;
+        if (all) {
+            addListTableModelSupplier(); // Se actualiza la lista con los datos de proveedores de la base de datos
+            updateComoBoxSupplierOfProduct(); // Con los datos de la lista, actualizar el comboBox
+            addListTableModelProduct(); // Actualizar la tabla producto            
+        }
     }
 
     /**
