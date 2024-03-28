@@ -121,7 +121,8 @@ public class ExcelReport {
                 datosEstilo.setBorderRight(BorderStyle.THIN);
                 datosEstilo.setBorderBottom(BorderStyle.THIN);
 
-                ps = conn.prepareStatement("SELECT codigo, nombre, proveedor, cantidad, precio FROM productos");
+                ps = conn.prepareStatement("SELECT a.codigo codigo, a.nombre nombre, b.nombre proveedor, a.cantidad cantidad, a.precio precio FROM productos a INNER JOIN proveedores b ON a.proveedor = b.id_proveedores");
+
                 rs = ps.executeQuery();
                 int numCol = rs.getMetaData().getColumnCount();
                 /**

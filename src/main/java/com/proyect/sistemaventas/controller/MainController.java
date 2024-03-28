@@ -16,6 +16,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -83,6 +84,7 @@ public class MainController implements ActionListener {
     private String newValueCountNV; // Valor obtenido de la nueva cantidad que va a ingresar el usuario por el showMessageDialog
     private int itemPositionNV; // Permite saber en que posición se encuentra el producto en tableNV
     private int itemSelectNV; // Fila seleccionada de la tableNV
+    private ArrayList listProductSelectedInTableNV = new ArrayList(); // Array que contiende los códigos de los productos seleccionados en la tableNV
     private boolean isSelectItemNV = false; // Verifica que haya sido seleccionado un item de la tabla
     private final DefaultTableModel tableModelNewSales = new DefaultTableModel();
 
@@ -462,8 +464,7 @@ public class MainController implements ActionListener {
 
     /**
      * Permite seleccionar la fila de la tabla NUEVA VENTA y generar el evento.
-     * En este evento se realiza para seleccionar el item que será sacado de la
-     * tabla
+     * En este evento se realiza para seleccionar el item del producto
      */
     MouseAdapter mouseAdapterNewSales = new MouseAdapter() {
         @Override
@@ -471,6 +472,8 @@ public class MainController implements ActionListener {
             if (systemPrincipal.tableNV.rowAtPoint(e.getPoint()) != -1) {
                 itemSelectNV = systemPrincipal.tableNV.rowAtPoint(e.getPoint());
                 isSelectItemNV = true;
+                toCleanNewSaleProduct(); // limpiar campos para que solo aparezca el código que se selecciona
+                systemPrincipal.fieldCodigoNV.setText(systemPrincipal.tableNV.getValueAt(itemSelectNV, 0).toString()); // Mostrar código del producto seleccionado en el campo de código
             }
         }
     };
@@ -503,6 +506,8 @@ public class MainController implements ActionListener {
                                         systemPrincipal.fieldProductoNV.setText(nameProduct);
                                         systemPrincipal.fieldPrecioNV.setText(String.valueOf(priceProduct));
                                         systemPrincipal.fieldStockNV.setText(String.valueOf(countProduct));
+                                        Object[] row = {codeProduct, nameProduct}; // Tener en una lista el código del producto con su nombre, principalmente
+                                        listProductSelectedInTableNV.add(row); // Agregarlo a la lista
                                         codeSelectNV = true;
                                     }
                                     case 2 -> {
@@ -519,7 +524,9 @@ public class MainController implements ActionListener {
                                 if (isLocationInTableNV()) {// Si ya fue agregado se muestra una ventana para generar la nueva cantidad 
                                     do { // Permite no cerrar el inputDialog en caso, por ejemplo, de que ingrese un dato no valido
                                         int countProductSelect = Integer.parseInt(systemPrincipal.tableNV.getValueAt(itemPositionNV, 2).toString());
-                                        newValueCountNV = JOptionPane.showInputDialog("Tiene " + countProductSelect + " unidades seleccionadas del producto " + nameProduct + "\nCuántas desea llevar en total?");
+                                        String nameProductSelect = systemPrincipal.tableNV.getValueAt(itemPositionNV, 1).toString(); // Obtener el nombre del producto desde la tabla
+                                        String stockProductSelect = findStockProductSelected(codeProduct); // Obtener el stock actualizado desde la base de datos
+                                        newValueCountNV = JOptionPane.showInputDialog("Tiene " + countProductSelect + " unidades seleccionadas del producto " + nameProductSelect + "\nUnidades disponibles: " + stockProductSelect + "\n¿Cuántas desea llevar en total?");
                                         if (newValueCountNV != null) {
                                             priceProduct = Integer.parseInt(systemPrincipal.tableNV.getValueAt(itemPositionNV, 3).toString()); // Actualizar precio del producto, si entra en este if trae el price del último lugar donde se realizó consulta a la base de datos
                                             switch (validationIndicateCountProductNV(newValueCountNV, countProduct)) {
@@ -552,6 +559,8 @@ public class MainController implements ActionListener {
                                             systemPrincipal.fieldProductoNV.setText(nameProduct);
                                             systemPrincipal.fieldPrecioNV.setText(String.valueOf(priceProduct));
                                             systemPrincipal.fieldStockNV.setText(String.valueOf(countProduct));
+                                            Object[] row = {codeProduct, nameProduct}; // Tener en una lista el código del producto con su nombre, principalmente
+                                            listProductSelectedInTableNV.add(row); // Agregarlo a la lista
                                         }
                                         case 2 -> {
                                             JOptionPane.showMessageDialog(null, "Código de producto no registrado");
@@ -660,11 +669,22 @@ public class MainController implements ActionListener {
          */
         if (e.getSource() == systemPrincipal.btnEliminarNV) {
             if (isSelectItemNV) { // Confirma que primero haya sido seleccionado un registro de la tabla
+                String codeSelectedByItemSelectNV;
                 if (JOptionPane.showConfirmDialog(null, "¿Seguro de sacar el producto " + tableModelNewSales.getValueAt(itemSelectNV, 1) + " de la lista?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                    tableModelNewSales.removeRow(itemSelectNV);
+                    codeSelectedByItemSelectNV = tableModelNewSales.getValueAt(itemSelectNV, 0).toString(); // Obtener el código del producto gracias al itemSelectNV generado al dar click en la fila de la tableNV
+                    // Eliminarlo tambien del array donde fueron agregados los productos seleccionados
+                    for (int i = 0; i < listProductSelectedInTableNV.size(); i++) {
+                        String codeValue = ((Object[]) listProductSelectedInTableNV.get(i))[0].toString(); // Obtener el código del array
+                        if (codeSelectedByItemSelectNV.equals(codeValue)) { // verificarlo si se encuentra
+                            listProductSelectedInTableNV.remove(i); // eliminarlo del array
+                            break;
+                        }
+                    }
+                    tableModelNewSales.removeRow(itemSelectNV); // Eliminarlo de la fila de la tabla
                     systemPrincipal.fieldTotalPagarNV.setText(String.valueOf(totalToPay()));
                 }
                 isSelectItemNV = false; // Sea cual sea la respuesta se pone en false para que tenga que volver a seleccionar un item
+                toCleanNewSaleProduct(); // limpiar los datos del producto al eliminar el producto de la lista
             } else {
                 JOptionPane.showMessageDialog(null, "Seleccione primero el producto en la tabla");
             }
@@ -1134,13 +1154,25 @@ public class MainController implements ActionListener {
      * decir, un int
      */
     private int findIdSupplierSelected(String name) {
-        int encontrado = 0;
+        int findIdSupplier = 0;
         for (Supplier suppList : listSupplier) {
             if (name.equals(suppList.getName())) {
-                encontrado = suppList.getIdSupplier();
+                findIdSupplier = suppList.getIdSupplier();
             }
         }
-        return encontrado;
+        return findIdSupplier;
+    }
+
+    /**
+     *
+     * @param codeProduct hace referencia al código que se repite en la tableNV
+     * @return de tipo String la cantidad de stock del producto obtenido desde
+     * la base de datos
+     */
+    private String findStockProductSelected(String codeProduct) {
+        product.setCode(codeProduct); // Envio el código del producto el cual será sacado de la lista de la tableNV para realizar la consulta a la base de datos
+        productImpl.findById(product); // Hago la consulta a la base de datos
+        return String.valueOf(product.getCount()); // Retorno el valor de la cantidad de unidades de ese producto
     }
 
     /**
