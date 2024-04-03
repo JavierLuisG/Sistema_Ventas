@@ -127,6 +127,13 @@ public class MainController implements ActionListener {
         startSupplier();
         startProduct();
         startNewSale();
+        /* Acciones sobre los botones para los Tab */
+        systemPrincipal.btnNuevaVenta.addActionListener(this);
+        systemPrincipal.btnClientes.addActionListener(this);
+        systemPrincipal.btnProveedor.addActionListener(this);
+        systemPrincipal.btnProductos.addActionListener(this);
+        systemPrincipal.btnVentas.addActionListener(this);
+        systemPrincipal.btnConfiguracion.addActionListener(this);
     }
 
     /**
@@ -663,6 +670,27 @@ public class MainController implements ActionListener {
                 case 0 ->
                     JOptionPane.showMessageDialog(null, "Email o contraseña incorrectos");
             }
+        }
+        /**
+         * ActionEvent de los Tab para asignar a los botones principales
+         */
+        if (e.getSource() == systemPrincipal.btnNuevaVenta) {
+            systemPrincipal.jTabbedPane1.setSelectedIndex(0);
+        }
+        if (e.getSource() == systemPrincipal.btnClientes) {
+            systemPrincipal.jTabbedPane1.setSelectedIndex(1);
+        }
+        if (e.getSource() == systemPrincipal.btnProveedor) {
+            systemPrincipal.jTabbedPane1.setSelectedIndex(2);
+        }
+        if (e.getSource() == systemPrincipal.btnProductos) {
+            systemPrincipal.jTabbedPane1.setSelectedIndex(3);
+        }
+        if (e.getSource() == systemPrincipal.btnVentas) {
+            systemPrincipal.jTabbedPane1.setSelectedIndex(4);
+        }
+        if (e.getSource() == systemPrincipal.btnConfiguracion) {
+            systemPrincipal.jTabbedPane1.setSelectedIndex(5);
         }
         /**
          * ActionEnvent de SYSTEMPRINCIPAL - New Sales
