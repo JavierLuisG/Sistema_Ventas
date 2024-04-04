@@ -2,10 +2,12 @@ package com.proyect.sistemaventas.controller;
 
 import com.proyect.sistemaventas.dal.dao.implement.CustomerDAOImpl;
 import com.proyect.sistemaventas.dal.dao.implement.ProductDAOImpl;
+import com.proyect.sistemaventas.dal.dao.implement.SaleDAOImpl;
 import com.proyect.sistemaventas.dal.dao.implement.SupplierDAOImpl;
 import com.proyect.sistemaventas.dal.dao.implement.UserDAOImpl;
 import com.proyect.sistemaventas.model.Customer;
 import com.proyect.sistemaventas.model.Product;
+import com.proyect.sistemaventas.model.Sale;
 import com.proyect.sistemaventas.model.Supplier;
 import com.proyect.sistemaventas.model.User;
 import com.proyect.sistemaventas.view.LoginView;
@@ -43,7 +45,12 @@ public class MainController implements ActionListener {
     private Product product;
     private ProductDAOImpl productImpl;
 
+    // Sale
+    private Sale sale;
+    private SaleDAOImpl saleImpl;
+
     /* Variables de Customer */
+    private int idCustomer;
     private String identificationCustomer;
     private String nameCustomer;
     private String phoneNumberCustomer;
@@ -211,8 +218,11 @@ public class MainController implements ActionListener {
      * No es necesario inicializar ya que se optione la información de product
      */
     private void startNewSale() {
+        sale = new Sale();
+        saleImpl = new SaleDAOImpl();
         /* Acciones sobre los botones */
         systemPrincipal.btnEliminarNV.addActionListener(this);
+        systemPrincipal.btnImprimirNV.addActionListener(this);
         /* Acción al mouse para seleccionar la fila de la tabla */
         systemPrincipal.tableNV.addMouseListener(mouseAdapterNewSales);
         /* Accion enter sobre las cajas */
@@ -627,12 +637,14 @@ public class MainController implements ActionListener {
                         customer.setIdentification(identificationCustomer);
                         switch (customerImpl.findById(customer)) {
                             case 1 -> {
+                                idCustomer = customer.getIdCustomer();
                                 nameCustomer = customer.getName();
                                 emailCustomer = customer.getEmail();
                                 phoneNumberCustomer = customer.getPhoneNumber();
                                 addressCustomer = customer.getAddress();
                                 razonSocialCustomer = customer.getRazonSocial();
                                 systemPrincipal.fieldNombreClienteNV.setText(nameCustomer);
+                                systemPrincipal.fieldIdClienteNV.setText(String.valueOf(idCustomer));
                             }
                             case 2 -> {
                                 JOptionPane.showMessageDialog(null, "N° identificación no registrado");
@@ -715,6 +727,20 @@ public class MainController implements ActionListener {
                 toCleanNewSaleProduct(); // limpiar los datos del producto al eliminar el producto de la lista
             } else {
                 JOptionPane.showMessageDialog(null, "Seleccione primero el producto en la tabla");
+            }
+        }
+        if (e.getSource() == systemPrincipal.btnImprimirNV) {
+            sale.setCustomer(Integer.parseInt(systemPrincipal.fieldIdClienteNV.getText())); // Se obtiene el idCliente del campo y no de la variable
+            sale.setSeller(user.getIdUser());
+            sale.setTotalSale(totalToPay());
+            switch (saleImpl.insert(sale)) {
+                case 1 -> {
+                    JOptionPane.showMessageDialog(null, "Venta realizada");
+                }
+                case 2 ->
+                    JOptionPane.showMessageDialog(null, "Error al realizar venta");
+                case 0 ->
+                    JOptionPane.showMessageDialog(null, "Problemas en la conexión");
             }
         }
         /**
@@ -1150,6 +1176,7 @@ public class MainController implements ActionListener {
     private void toCleanNewSaleCustomer() {
         systemPrincipal.fieldIdentificationClienteNV.setText("");
         systemPrincipal.fieldNombreClienteNV.setText("");
+        systemPrincipal.fieldIdClienteNV.setText("");
     }
 
     /**

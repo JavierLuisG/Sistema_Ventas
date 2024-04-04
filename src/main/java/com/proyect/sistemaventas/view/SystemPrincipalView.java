@@ -44,6 +44,7 @@ public class SystemPrincipalView extends javax.swing.JFrame {
         fieldDireccionNV = new javax.swing.JTextField();
         fieldRazonSocialNV = new javax.swing.JTextField();
         fieldIdProductoNV = new javax.swing.JTextField();
+        fieldIdClienteNV = new javax.swing.JTextField();
         panelClientes = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tableClientes = new javax.swing.JTable();
@@ -330,7 +331,9 @@ public class SystemPrincipalView extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(fieldRazonSocialNV, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(fieldIdProductoNV, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(fieldIdProductoNV, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(fieldIdClienteNV, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnImprimirNV, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -370,7 +373,7 @@ public class SystemPrincipalView extends javax.swing.JFrame {
         panelNVLayout.setVerticalGroup(
             panelNVLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelNVLayout.createSequentialGroup()
-                .addContainerGap(33, Short.MAX_VALUE)
+                .addContainerGap(34, Short.MAX_VALUE)
                 .addGroup(panelNVLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(panelNVLayout.createSequentialGroup()
                         .addGroup(panelNVLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -398,7 +401,8 @@ public class SystemPrincipalView extends javax.swing.JFrame {
                             .addComponent(fieldTelefonoNV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(fieldDireccionNV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(fieldRazonSocialNV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(fieldIdProductoNV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(fieldIdProductoNV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(fieldIdClienteNV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(12, 12, 12)
                         .addGroup(panelNVLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(fieldNombreClienteNV, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -411,7 +415,7 @@ public class SystemPrincipalView extends javax.swing.JFrame {
                                 .addComponent(jLabel8))
                             .addComponent(btnImprimirNV))
                         .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addContainerGap(53, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("tab1", panelNV);
@@ -1129,6 +1133,7 @@ public class SystemPrincipalView extends javax.swing.JFrame {
     public javax.swing.JTextField fieldDireccionProveedor;
     public javax.swing.JTextField fieldEmailClientes;
     public javax.swing.JTextField fieldEmailProveedor;
+    public javax.swing.JTextField fieldIdClienteNV;
     public javax.swing.JTextField fieldIdClientes;
     public javax.swing.JTextField fieldIdProducto;
     public javax.swing.JTextField fieldIdProductoNV;
