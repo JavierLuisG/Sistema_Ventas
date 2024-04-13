@@ -730,17 +730,22 @@ public class MainController implements ActionListener {
             }
         }
         if (e.getSource() == systemPrincipal.btnImprimirNV) {
-            sale.setCustomer(Integer.parseInt(systemPrincipal.fieldIdClienteNV.getText())); // Se obtiene el idCliente del campo y no de la variable
-            sale.setSeller(user.getIdUser());
-            sale.setTotalSale(totalToPay());
-            switch (saleImpl.insert(sale)) {
-                case 1 -> {
-                    JOptionPane.showMessageDialog(null, "Venta realizada");
+            if (!systemPrincipal.fieldIdClienteNV.getText().isEmpty() && user.getIdUser() != 0 && totalToPay() != 0) {
+                sale.setCustomer(Integer.parseInt(systemPrincipal.fieldIdClienteNV.getText())); // Se obtiene el idCliente del campo y no de la variable
+                sale.setSeller(user.getIdUser());
+                sale.setTotalSale(totalToPay());
+                switch (saleImpl.insert(sale)) {
+                    case 1 -> {
+                        JOptionPane.showMessageDialog(null, "Venta realizada");
+                        toCleanNewSale();
+                    }
+                    case 2 ->
+                        JOptionPane.showMessageDialog(null, "Error al realizar venta");
+                    case 0 ->
+                        JOptionPane.showMessageDialog(null, "Problemas en la conexión");
                 }
-                case 2 ->
-                    JOptionPane.showMessageDialog(null, "Error al realizar venta");
-                case 0 ->
-                    JOptionPane.showMessageDialog(null, "Problemas en la conexión");
+            } else {
+                JOptionPane.showMessageDialog(null, "Confirme los datos solicitados");
             }
         }
         /**
@@ -1190,7 +1195,17 @@ public class MainController implements ActionListener {
         systemPrincipal.fieldStockNV.setText("");
         codeSelectNV = false; // Con false ya no hay código seleccionado, debe nuevamente escoger un producto el usuario
     }
-
+    
+    /**
+     * Limpiar los campos de todo New Sale
+     */
+    private void toCleanNewSale() {
+        toCleanNewSaleCustomer();
+        toCleanNewSaleProduct();
+        tableModelNewSales.setRowCount(0);
+        systemPrincipal.fieldTotalPagarNV.setText("");
+    }
+    
     /**
      *
      * @param text en String ya que es obtenido de un field
